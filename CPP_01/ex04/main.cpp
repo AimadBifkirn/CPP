@@ -21,6 +21,7 @@ int main(int argc, char **argv)
 	std::ofstream outputFile(((std::string)argv[1] + ".replace").c_str());
 	if (!outputFile)
 	{
+		inputFile.close();
 		std::cerr << "Failed to create the output file(.replace) !!" << std::endl;
 		return (1);
 	}
@@ -37,5 +38,7 @@ int main(int argc, char **argv)
 		}
 		outputFile << line << std::endl;
 	}
+	inputFile.close();
+	outputFile.close();
 	return (0);
 }
