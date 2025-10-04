@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 	if (!inputFile)
 	{
 		std::cerr << "Failed to open the file : " << argv[1] << std::endl;
-		return (1); 
+		return (1);
 	}
 	std::ofstream outputFile(((std::string)argv[1] + ".replace").c_str());
 	if (!outputFile)
@@ -31,12 +31,13 @@ int main(int argc, char **argv)
 		size_t	pos = 0;
 		while ((pos = line.find(argv[2], pos)) != std::string::npos)
 		{
-			std::string	s1 = line.substr(0, pos);
-			std::string	s2 = line.substr(pos + ((std::string)argv[2]).length(), line.length());
-			line = s1 + (std::string)argv[3] + s2;
+			line.erase(pos, std::string(argv[2]).length());
+			line.insert(pos, std::string(argv[3]));
 			pos += ((std::string)argv[3]).length();
 		}
-		outputFile << line << std::endl;
+		outputFile << line;
+		if (!inputFile.eof())
+			outputFile << std::endl;
 	}
 	inputFile.close();
 	outputFile.close();

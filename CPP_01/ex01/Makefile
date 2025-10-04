@@ -1,5 +1,23 @@
+NAME = moarBrainz
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
-all :
-	${CXX} $(CXXFLAGS) main.cpp Zombie.cpp zombieHorde.cpp -o moarbrainz
+SRC = main.cpp Zombie.cpp zombieHorde.cpp
+
+OBJ = ${SRC:.cpp=.o}
+
+all: ${NAME}
+
+%.o:%.cpp
+	${CXX} ${CXXFLAGS} -c $< -o $@
+
+${NAME}: ${OBJ}
+	${CXX} ${CXXFLAGS} ${OBJ} -o ${NAME}
+
+clean: 
+	rm -f ${OBJ}
+
+fclean: clean
+	rm -f ${NAME}
+
+re: fclean all
