@@ -4,19 +4,19 @@ const int Fixed::fraction = 8;
 
 Fixed::Fixed ()
 {
-	std::cout << "Default constructor called" << std::endl;
+	// std::cout << "Default constructor called" << std::endl;
 	this->fp_value = 0;
 }
 
 Fixed::Fixed (const Fixed &other)
 {
-	std::cout << "Copy constructor called" << std::endl;
+	// std::cout << "Copy constructor called" << std::endl;
 	*this = other;
 }
 
 Fixed& Fixed::operator=(const Fixed &obj)
 {
-	std::cout << "Copy assignment operator called" << std::endl;
+	// std::cout << "Copy assignment operator called" << std::endl;
 	if (this != &obj)
 	{
 		this->fp_value = obj.getRawBits();
@@ -26,7 +26,7 @@ Fixed& Fixed::operator=(const Fixed &obj)
 
 Fixed::~Fixed ()
 {
-	std::cout << "Destructor called" << std::endl;
+	// std::cout << "Destructor called" << std::endl;
 }
 
 int Fixed::getRawBits(void) const
@@ -43,13 +43,13 @@ void	Fixed::setRawBits(int const raw)
 
 Fixed::Fixed (const int value)
 {
-	std::cout << "Int constructor called" << std::endl;
+	// std::cout << "Int constructor called" << std::endl;
 	this->fp_value = value * pow(2, this->fraction);
 }
 
 Fixed::Fixed (const float value)
 {
-	std::cout << "Float constructor called" << std::endl;
+	// std::cout << "Float constructor called" << std::endl;
 	this->fp_value = roundf(value * pow(2, this->fraction));
 }
 
@@ -67,4 +67,34 @@ std::ostream &operator<< (std::ostream &out, const Fixed &obj)
 {
 	out << obj.toFloat();
 	return (out);
+}
+
+Fixed &Fixed::operator> (Fixed &obj)
+{
+	return (this->fp_value > obj.fp_value ? *this : obj);
+}
+
+Fixed &Fixed::operator< (Fixed &obj)
+{
+	return (this->fp_value < obj.fp_value ? *this : obj);
+}
+
+Fixed &Fixed::operator== (Fixed &obj)
+{
+	return (this->fp_value == obj.fp_value ? *this : obj);
+}
+
+Fixed &Fixed::operator>= (Fixed &obj)
+{
+	return (this->fp_value >= obj.fp_value ? *this : obj);
+}
+
+Fixed &Fixed::operator<= (Fixed &obj)
+{
+	return (this->fp_value <= obj.fp_value ? *this : obj);
+}
+
+Fixed &Fixed::operator!= (Fixed &obj)
+{
+	return (this->fp_value != obj.fp_value ? *this : obj);
 }
