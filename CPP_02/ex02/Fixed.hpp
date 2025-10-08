@@ -33,10 +33,10 @@ class Fixed
 		Fixed operator- (Fixed &obj);
 		Fixed operator* (Fixed &obj);
 		Fixed operator/ (Fixed &obj);
-		Fixed &operator++ ();
-		Fixed &operator++ (int);
-		Fixed &operator-- ();
-		Fixed &operator-- (int);
+		Fixed operator++ ();
+		Fixed operator++ (int);
+		Fixed operator-- ();
+		Fixed operator-- (int);
 		static Fixed &min (Fixed &a, Fixed &b);
 		static Fixed &min (const Fixed &a, const Fixed &b);
 		static Fixed &max (Fixed &a, Fixed &b);

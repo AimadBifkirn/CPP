@@ -98,3 +98,49 @@ bool Fixed::operator!= (Fixed &obj)
 {
 	return (this->fp_value != obj.fp_value);
 }
+
+Fixed Fixed::operator+ (Fixed &obj)
+{
+	return (Fixed (this->toFloat() + obj.toFloat()));
+}
+
+Fixed Fixed::operator- (Fixed &obj)
+{
+	return (Fixed (this->toFloat() - obj.toFloat()));
+}
+
+Fixed Fixed::operator* (Fixed &obj)
+{
+	return (Fixed (this->toFloat() * obj.toFloat()));
+}
+
+Fixed Fixed::operator/ (Fixed &obj)
+{
+	return (Fixed (this->toFloat() / obj.toFloat()));
+}
+
+Fixed Fixed::operator++ ()
+{
+	this->fp_value++;
+	return (*this);
+}
+
+Fixed Fixed::operator++ (int)
+{
+	Fixed res(*this);
+	this->fp_value++;
+	return (res);
+}
+
+Fixed Fixed::operator-- ()
+{
+	this->fp_value--;
+	return (*this);
+}
+
+Fixed Fixed::operator-- (int)
+{
+	Fixed res(*this);
+	this->fp_value--;
+	return (res);
+}
