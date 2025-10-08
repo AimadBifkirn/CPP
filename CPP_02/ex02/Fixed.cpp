@@ -69,32 +69,32 @@ std::ostream &operator<< (std::ostream &out, const Fixed &obj)
 	return (out);
 }
 
-Fixed &Fixed::operator> (Fixed &obj)
+bool Fixed::operator> (Fixed &obj)
 {
-	return (this->fp_value > obj.fp_value ? *this : obj);
+	return (this->fp_value > obj.fp_value);
 }
 
-Fixed &Fixed::operator< (Fixed &obj)
+bool Fixed::operator< (Fixed &obj)
 {
-	return (this->fp_value < obj.fp_value ? *this : obj);
+	return (this->fp_value < obj.fp_value);
 }
 
-Fixed &Fixed::operator== (Fixed &obj)
+bool Fixed::operator== (Fixed &obj)
 {
-	return (this->fp_value == obj.fp_value ? *this : obj);
+	return (this->fp_value == obj.fp_value);
 }
 
-Fixed &Fixed::operator>= (Fixed &obj)
+bool Fixed::operator>= (Fixed &obj)
 {
-	return (this->fp_value >= obj.fp_value ? *this : obj);
+	return (this->fp_value >= obj.fp_value);
 }
 
-Fixed &Fixed::operator<= (Fixed &obj)
+bool Fixed::operator<= (Fixed &obj)
 {
-	return (this->fp_value <= obj.fp_value ? *this : obj);
+	return (this->fp_value <= obj.fp_value);
 }
 
-Fixed &Fixed::operator!= (Fixed &obj)
+bool Fixed::operator!= (Fixed &obj)
 {
-	return (this->fp_value != obj.fp_value ? *this : obj);
+	return (this->fp_value != obj.fp_value);
 }
