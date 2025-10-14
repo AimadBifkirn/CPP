@@ -42,23 +42,23 @@ void	Fixed::setRawBits(int const raw)
 Fixed::Fixed (const int value)
 {
 	std::cout << "Int constructor called" << std::endl;
-	this->fp_value = value * pow(2, this->fraction);
+	this->fp_value = value * (1 << this->fraction);
 }
 
 Fixed::Fixed (const float value)
 {
 	std::cout << "Float constructor called" << std::endl;
-	this->fp_value = roundf(value * pow(2, this->fraction));
+	this->fp_value = roundf(value * (1 << this->fraction));
 }
 
 int	Fixed::toInt(void) const
 {
-	return (this->fp_value / pow(2, this->fraction));
+	return (this->fp_value / (1 << this->fraction));
 }
 
 float Fixed::toFloat (void) const
 {
-	return (this->fp_value / (float)pow(2, this->fraction));
+	return (this->fp_value / (float)(1 << this->fraction));
 }
 
 std::ostream &operator<< (std::ostream &out, const Fixed &obj)
