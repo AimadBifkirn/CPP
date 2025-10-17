@@ -5,6 +5,7 @@ ClapTrap::ClapTrap()
 	this->EnergyPoints = 10;
 	this->HitPoints = 10;
 	this->AttackDamage = 0;
+	this->Name = "default";
 	std::cout << "Default constructor called" << std::endl;
 }
 
@@ -32,9 +33,56 @@ ClapTrap::~ClapTrap()
 	std::cout << "Destructor called" << std::endl;
 }
 
-ClapTrap::ClapTrap(std::string &Name)
+ClapTrap::ClapTrap(std::string Name)
 {
 	this->Name = Name;
+	this->EnergyPoints = 10;
+	this->HitPoints = 10;
+	this->AttackDamage = 0;
 	std::cout << "Parametrised constructor called" << std::endl;
 }
 
+void ClapTrap::attack(const std::string& target)
+{
+	if (this->EnergyPoints > 0 && this->HitPoints > 0)
+	{
+		this->EnergyPoints--;
+		std::cout << "ClapTrap " << this->Name << " attacks " << target << ", causing <damage> points of damage!" << std::endl;
+	}
+	else if (this->EnergyPoints == 0)
+		std::cout << "ClapTrap " << this->Name << " can't attack because it has no energy points!" << std::endl;
+	else
+		std::cout << "ClapTrap " << this->Name << " can't attack because it has no hit points!" << std::endl;
+}
+
+void ClapTrap::takeDamage(unsigned int amount)
+{
+	if (this->HitPoints > amount)
+	{
+		this->HitPoints -= amount;
+		std::cout << "ClapTrap " << this->Name << " was attacked and lost " << amount << " hit points, it has now " << this->HitPoints << " hit points!" << std::endl;
+	}
+	else if (this->HitPoints > 0)
+	{
+		std::cout << "ClapTrap " << this->Name << " was attacked and lost " << this->HitPoints << " of hit points, it has now 0 hit points!" << std::endl;
+		this->HitPoints = 0;
+	}
+	else
+		std::cout << "ClapTrap " << this->Name << " is dead!!" << std::endl;
+}
+
+void ClapTrap::beRepaired(unsigned int amount)
+{
+	if (this->HitPoints > 0 && this->EnergyPoints > 0 && this->HitPoints + amount <= 10)
+	{
+		this->EnergyPoints--;
+		this->HitPoints += amount;
+		std::cout << "ClapTrap " << this->Name << " repaired itself with " << amount << " hit points, it has now " << this->HitPoints << " hit points!" << std::endl;
+	}
+	else if (this->EnergyPoints == 0)
+		std::cout << "ClapTrap " << this->Name << " can't be repaired because it has no energy points!" << std::endl;
+	else if (this->HitPoints == 0)
+		std::cout << "ClapTrap " << this->Name << " can't be repaired because it has no hit points!" << std::endl;
+	else
+		std::cout << "ClapTrap " << this->Name << " can't have more then 10 hit points, it has now " << this->HitPoints << " hit points!" << std::endl;
+}
