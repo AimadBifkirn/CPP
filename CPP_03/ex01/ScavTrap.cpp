@@ -2,6 +2,10 @@
 
 ScavTrap::ScavTrap ()
 {
+	this->HitPoints = 100;
+	this->EnergyPoints = 50;
+	this->AttackDamage = 20;
+	this->Name = "defaut";
 	std::cout << "ScavTrap: Default constructor called" << std::endl;
 }
 
@@ -13,9 +17,15 @@ ScavTrap::ScavTrap (const ScavTrap &other)
 
 ScavTrap &ScavTrap::operator= (const ScavTrap &obj)
 {
-		this->ClapTrap::operator=(obj);
-		std::cout << "ScavTrap: Copy assignment operator called" << std::endl;
-		return (*this);
+	if (this != &obj)
+	{
+		this->HitPoints = obj.HitPoints;
+		this->EnergyPoints = obj.EnergyPoints;
+		this->AttackDamage = obj.AttackDamage;
+		this->Name = obj.Name;
+	}
+	std::cout << "ScavTrap: Copy assignment operator called" << std::endl;
+	return (*this);
 }
 
 ScavTrap::~ScavTrap ()
@@ -26,6 +36,9 @@ ScavTrap::~ScavTrap ()
 ScavTrap::ScavTrap (std::string Name)
 {
 	this->Name = Name;
+	this->HitPoints = 100;
+	this->EnergyPoints = 50;
+	this->AttackDamage = 20;
 	std::cout << "ScavTrap: Parametrised constructor called" << std::endl;
 }
 
