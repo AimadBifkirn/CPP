@@ -6,5 +6,5 @@ int main ()
 
 	a.attack("l3do");
 	a.takeDamage(0);
-	a.beRepaired(0);
+	a.beRepaired(20);
 }
