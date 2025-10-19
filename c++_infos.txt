@@ -4,4 +4,7 @@
 (3). Deep copy is possible only with a user-defined copy constructor.
 (4). there is two ways to kall copy constructor, the most known is : MyClass a(existing_object); but there is another way, wich is : MyClass a = existing_object;
 	 this may seem like the assignement operator but it is actually a copy constructor, cuase object a dokesn't exist yet so the compiler calls the copy constructor to create it.
-(5). 
+(5). About inheritance:
+	 * a public inheritance keeps all the members of the parent class the same, private = private, protected = protected, public = public.
+	 * a private inheritance makes the public and the protected members private, and the private is inaccessible.
+	 * a protected inheritance keeps the protected and private as they are, and the public becoms protected.
