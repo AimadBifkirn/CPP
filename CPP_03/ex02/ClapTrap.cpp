@@ -2,9 +2,9 @@
 
 ClapTrap::ClapTrap()
 {
-	this->EnergyPoints = 50;
-	this->HitPoints = 100;
-	this->AttackDamage = 20;
+	this->EnergyPoints = 10;
+	this->HitPoints = 10;
+	this->AttackDamage = 0;
 	this->Name = "default";
 	std::cout << "ClapTrap: Default constructor called" << std::endl;
 }
@@ -36,9 +36,9 @@ ClapTrap::~ClapTrap()
 ClapTrap::ClapTrap(std::string Name)
 {
 	this->Name = Name;
-	this->EnergyPoints = 50;
-	this->HitPoints = 100;
-	this->AttackDamage = 20;
+	this->EnergyPoints = 10;
+	this->HitPoints = 10;
+	this->AttackDamage = 0;
 	std::cout << "ClapTrap: Parametrised constructor called" << std::endl;
 }
 

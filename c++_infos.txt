@@ -1,0 +1,7 @@
+(1). If you create a copy constructor, the default constructor will no longer be provided by the compiler, so you have to impelement it yourself.
+(2). the implicit copy constructor of the compiler performs a shallow copy, wich is copying the values of the other object to the new one (this),
+	 so if you have a dinamic allocated data, the members of the two objects will point to the same memory, and that is dangerous.
+(3). Deep copy is possible only with a user-defined copy constructor.
+(4). there is two ways to kall copy constructor, the most known is : MyClass a(existing_object); but there is another way, wich is : MyClass a = existing_object;
+	 this may seem like the assignement operator but it is actually a copy constructor, cuase object a dokesn't exist yet so the compiler calls the copy constructor to create it.
+(5). 
