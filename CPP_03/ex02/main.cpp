@@ -5,7 +5,7 @@ int main ()
 {
 	FragTrap s("derived");
 	s.attack("l3do");
+	s.takeDamage(90);
 	s.beRepaired(10);
-	s.takeDamage(100);
 	s.highFivesGuys();
 }
