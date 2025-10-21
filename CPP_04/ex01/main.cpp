@@ -8,15 +8,26 @@ int main()
 
 	std::cout << "\n-----------------------------------------\n" << std::endl;
 
-	dynamic_cast<Cat *>(a[0])->setIdea(0, "first idea");
-	dynamic_cast<Cat *>(a[0])->setIdea(99, "last idea");
+	Cat* cat0 = dynamic_cast<Cat*>(a[0]);
+	Cat* cat1 = dynamic_cast<Cat*>(a[1]);
 
-	std::cout << dynamic_cast<Cat *>(a[0])->getIdea(0) << " | " << dynamic_cast<Cat *>(a[0])->getIdea(99) << std::endl;
-	std::cout << dynamic_cast<Cat *>(a[1])->getIdea(0) << " | " << dynamic_cast<Cat *>(a[1])->getIdea(99) << std::endl;
+	cat0->setIdea(0, "first idea");
+	cat0->setIdea(99, "last idea");
 
-	*(dynamic_cast<Cat *>(a[1])) = *(dynamic_cast<Cat *>(a[0]));
+	std::cout << "Before assignment:\n";
+	std::cout << "cat0: " << cat0->getIdea(0) << " | " << cat0->getIdea(99) << std::endl;
+	std::cout << "cat1: " << cat1->getIdea(0) << " | " << cat1->getIdea(99) << std::endl;
 
-	std::cout << dynamic_cast<Cat *>(a[1])->getIdea(0) << " | " << dynamic_cast<Cat *>(a[1])->getIdea(99) << std::endl;
+	*cat1 = *cat0;
+
+	std::cout << "After assignment:\n";
+	std::cout << "cat1: " << cat1->getIdea(0) << " | " << cat1->getIdea(99) << std::endl;
+
+	// test deep copy
+	cat0->setIdea(0, "changed idea");
+	std::cout << "After modifying cat0:\n";
+	std::cout << "cat0: " << cat0->getIdea(0) << std::endl;
+	std::cout << "cat1: " << cat1->getIdea(0) << std::endl;
 
 	std::cout << "\n-----------------------------------------\n" << std::endl;
 
