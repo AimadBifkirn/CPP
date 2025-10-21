@@ -15,7 +15,10 @@ Brain &Brain::operator= (const Brain &obj)
 {
 	if (this != &obj)
 	{
-		// i have to coppy the ideas inside brain (deep copy)
+		for (int i = 0; i < 100 ; i++)
+		{
+			this->ideas[i] = obj.ideas[i];
+		}
 	}
 	std::cout << "Brain: Copy assignement operator called" << std::endl;
 	return (*this);

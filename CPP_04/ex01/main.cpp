@@ -4,31 +4,24 @@
 
 int main()
 {
-	{
-		const Animal* meta = new Animal();
-		const Animal* j = new Dog();
-		const Animal* i = new Cat();
-		std::cout << j->getType() << " " << std::endl;
-		std::cout << i->getType() << " " << std::endl;
-		i->makeSound(); //will output the cat sound!
-		j->makeSound();
-		meta->makeSound();
+	Animal *a[4] = {new Cat, new Cat, new Dog, new Dog};
 
-		delete meta;
-		delete i;
-		delete j;
-	}
-	std::cout << "\n--------------------------------------------------------\n" << std::endl;
-	{
-		const WrongAnimal* meta = new WrongAnimal();
-		const WrongAnimal* i = new WrongCat();
-		std::cout << i->getType() << " " << std::endl;
-		i->makeSound(); //will output the cat sound!
-		meta->makeSound();
+	std::cout << "\n-----------------------------------------\n" << std::endl;
 
-		delete meta;
-		delete i;
-	}
+	dynamic_cast<Cat *>(a[0])->setIdea(0, "first idea");
+	dynamic_cast<Cat *>(a[0])->setIdea(99, "last idea");
+
+	std::cout << dynamic_cast<Cat *>(a[0])->getIdea(0) << " | " << dynamic_cast<Cat *>(a[0])->getIdea(99) << std::endl;
+	std::cout << dynamic_cast<Cat *>(a[1])->getIdea(0) << " | " << dynamic_cast<Cat *>(a[1])->getIdea(99) << std::endl;
+
+	*(dynamic_cast<Cat *>(a[1])) = *(dynamic_cast<Cat *>(a[0]));
+
+	std::cout << dynamic_cast<Cat *>(a[1])->getIdea(0) << " | " << dynamic_cast<Cat *>(a[1])->getIdea(99) << std::endl;
+
+	std::cout << "\n-----------------------------------------\n" << std::endl;
+
+	for (int i = 0; i < 4; i++)
+		delete (a[i]);
 
 	return 0;
 }
