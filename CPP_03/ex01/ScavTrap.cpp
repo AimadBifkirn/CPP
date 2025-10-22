@@ -11,8 +11,8 @@ ScavTrap::ScavTrap ()
 
 ScavTrap::ScavTrap (const ScavTrap &other)
 {
-	*this = other;
 	std::cout << "ScavTrap: Copy constructor called" << std::endl;
+	*this = other;
 }
 
 ScavTrap &ScavTrap::operator= (const ScavTrap &obj)
