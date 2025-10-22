@@ -7,6 +7,8 @@ class Character : public ICharacter
 	private:
 		std::string name;
 		AMateria *slot[4];
+		AMateria *deleted[100];
+		int			d_idx;
 	public:
 
 		Character ();

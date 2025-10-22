@@ -1,7 +1,7 @@
 #include "Character.hpp"
 #include "AMateria.hpp"
 
-Character::Character ()
+Character::Character () : d_idx (0)
 {
 	this->name = "Character";
 
@@ -19,7 +19,8 @@ Character::Character (const Character &other)
 Character &Character::operator= (const Character &obj)
 {
 	if (this != &obj)
-	{
+	{ // deep copy needed
+		this->d_idx = 0;
 		this->name = obj.name;
 	}
 	return (*this);
@@ -50,7 +51,8 @@ void Character::equip(AMateria* m)
 
 void Character::unequip(int idx)
 {
-	delete this->slot[idx];
+
+
 	this->slot[idx] = NULL;
 }
 
