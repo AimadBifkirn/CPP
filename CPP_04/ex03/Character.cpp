@@ -20,6 +20,14 @@ Character &Character::operator= (const Character &obj)
 {
 	if (this != &obj)
 	{ // deep copy needed
+		for (int i = 0; i < 4; i++)
+		{
+			delete (this->slot[i]);
+			this->slot[i] = obj.slot[i]->clone();
+			// void* hh = operator new(sizeof(Character));
+			// Character* tmp = static_cast<Character*>(hh);
+			// new (&(*tmp)) Character( "name");
+		}
 		this->d_idx = 0;
 		this->name = obj.name;
 	}
