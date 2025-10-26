@@ -2,7 +2,7 @@
 
 Ice::Ice ()
 {
-	this->type = "Ice";
+	this->type = "ice";
 }
 
 Ice::Ice (const Ice &other)

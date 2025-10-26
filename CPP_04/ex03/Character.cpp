@@ -7,12 +7,16 @@ Character::Character () : d_idx (0)
 
 	for (int i = 0; i < 4; i++)
 		this->slot[i] = NULL;
+	for (int i = 0; i < 100; i++)
+		this->deleted[i] = NULL;
 }
 
 Character::Character (const Character &other)
 {
 	for (int i = 0; i < 4; i++)
 		this->slot[i] = NULL;
+	for (int i = 0; i < 100; i++)
+		this->deleted[i] = NULL;
 	*this = other;
 }
 
@@ -36,10 +40,18 @@ Character &Character::operator= (const Character &obj)
 
 Character::~Character ()
 {
+	for (int i = 0; i < 4; i++)
+		delete this->slot[i];
+	for (int i = 0; i < 4; i++)
+		delete this->deleted[i];
 }
 
 Character::Character(std::string const &name)
 {
+	for (int i = 0; i < 4; i++)
+		this->slot[i] = NULL;
+	for (int i = 0; i < 100; i++)
+		this->deleted[i] = NULL;
 	this->name = name;
 }
 
@@ -53,14 +65,23 @@ void Character::equip(AMateria* m)
 	for (int i = 0; i < 4; i++)
 	{
 		if (this->slot[i] == NULL)
+		{
 			this->slot[i] = m;
+			return ;
+		}
 	}
 }
 
 void Character::unequip(int idx)
 {
-
-
+	for (int i = 0; i < 100 ; i++)
+	{
+		if (this->deleted[i] == NULL)
+		{
+			this->deleted[i] = this->slot[idx];
+			break ;
+		}
+	}
 	this->slot[idx] = NULL;
 }
 
