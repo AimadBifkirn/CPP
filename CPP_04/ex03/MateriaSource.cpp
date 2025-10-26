@@ -18,7 +18,10 @@ MateriaSource &MateriaSource::operator= (const MateriaSource &obj)
 	for (int i = 0; i < 4; i++)
 	{
 		delete this->materias[i];
-		this->materias[i] = obj.materias[i]->clone();
+		if (obj.materias[i])
+			this->materias[i] = obj.materias[i]->clone();
+		else
+			this->materias[i] = NULL;
 	}
 	return (*this);
 }

@@ -27,10 +27,10 @@ Character &Character::operator= (const Character &obj)
 		for (int i = 0; i < 4; i++)
 		{
 			delete (this->slot[i]);
-			this->slot[i] = obj.slot[i]->clone();
-			// void* hh = operator new(sizeof(Character));
-			// Character* tmp = static_cast<Character*>(hh);
-			// new (&(*tmp)) Character( "name");
+			if (obj.slot[i])
+				this->slot[i] = obj.slot[i]->clone();
+			else
+				this->slot[i] = NULL;
 		}
 		this->d_idx = 0;
 		this->name = obj.name;
@@ -42,7 +42,7 @@ Character::~Character ()
 {
 	for (int i = 0; i < 4; i++)
 		delete this->slot[i];
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 100; i++)
 		delete this->deleted[i];
 }
 
@@ -64,18 +64,30 @@ void Character::equip(AMateria* m)
 {
 	for (int i = 0; i < 4; i++)
 	{
+		if (this->slot[i] == m)
+		{
+			std::cout << "Already stored this materia!" << std::endl;
+			return ;
+		}
 		if (this->slot[i] == NULL)
 		{
 			this->slot[i] = m;
 			return ;
 		}
 	}
+	delete m;
 }
 
 void Character::unequip(int idx)
 {
+	if (this->deleted[99]) {
+		std::cout << "can't unequip, the buffer is full!" << std::endl;
+		return;
+	}
 	for (int i = 0; i < 100 ; i++)
 	{
+		if (this->slot[idx] == this->deleted[i])
+			break;
 		if (this->deleted[i] == NULL)
 		{
 			this->deleted[i] = this->slot[idx];
