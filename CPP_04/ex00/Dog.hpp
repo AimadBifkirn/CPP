@@ -9,5 +9,6 @@ class Dog : public Animal
 		Dog (const Dog &other);
 		Dog &operator= (const Dog &obj);
 		~Dog ();
+
 		void makeSound() const;
 };
