@@ -9,5 +9,5 @@ class Brain
 		Brain ();
 		Brain (const Brain &other);
 		Brain &operator= (const Brain &obj);
-		virtual ~Brain ();
+		~Brain ();
 };
