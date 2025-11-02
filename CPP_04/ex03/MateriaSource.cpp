@@ -37,6 +37,7 @@ MateriaSource::~MateriaSource ()
 
 void MateriaSource::learnMateria(AMateria* mtobj)
 {
+
 	for (int i = 0; i < 4; i++)
 	{
 		if (this->materias[i] == mtobj)
@@ -44,6 +45,10 @@ void MateriaSource::learnMateria(AMateria* mtobj)
 			std::cout << "Already learned this materia!" << std::endl;
 			return ;
 		}
+	}
+
+	for (int i = 0; i < 4; i++)
+	{
 		if (this->materias[i] == NULL)
 		{
 			this->materias[i] = mtobj;

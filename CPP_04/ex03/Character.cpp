@@ -62,6 +62,7 @@ std::string const & Character::getName() const
 
 void Character::equip(AMateria* m)
 {
+
 	for (int i = 0; i < 4; i++)
 	{
 		if (this->slot[i] == m)
@@ -69,6 +70,16 @@ void Character::equip(AMateria* m)
 			std::cout << "Already stored this materia!" << std::endl;
 			return ;
 		}
+	}
+
+	for (int i = 0; i < 100; i++)
+	{
+		if (m == this->deleted[i])
+			return ;
+	}
+
+	for (int i = 0; i < 4; i++)
+	{
 		if (this->slot[i] == NULL)
 		{
 			this->slot[i] = m;
@@ -84,10 +95,15 @@ void Character::unequip(int idx)
 		std::cout << "can't unequip, the buffer is full!" << std::endl;
 		return;
 	}
-	for (int i = 0; i < 100 ; i++)
+
+	for (int i = 0; i < 100; i++)
 	{
 		if (this->slot[idx] == this->deleted[i])
-			break;
+			return ;
+	}
+
+	for (int i = 0; i < 100 ; i++)
+	{
 		if (this->deleted[i] == NULL)
 		{
 			this->deleted[i] = this->slot[idx];
