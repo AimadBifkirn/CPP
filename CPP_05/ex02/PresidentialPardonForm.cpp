@@ -4,8 +4,9 @@ PresidentialPardonForm::PresidentialPardonForm () : AForm ("PresidentialPardonFo
 {
 }
 
-PresidentialPardonForm::PresidentialPardonForm (const PresidentialPardonForm &other)  : AForm ("PresidentialPardonForm", 25, 5), target("default")
+PresidentialPardonForm::PresidentialPardonForm (const PresidentialPardonForm &other)  : AForm ("PresidentialPardonForm", 25, 5)
 {
+	*this = other;
 }
 
 PresidentialPardonForm &PresidentialPardonForm::operator= (const PresidentialPardonForm &obj)

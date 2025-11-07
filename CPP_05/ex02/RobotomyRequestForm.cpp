@@ -4,8 +4,9 @@ RobotomyRequestForm::RobotomyRequestForm () : AForm ("RobotomyRequestForm", 72, 
 {
 }
 
-RobotomyRequestForm::RobotomyRequestForm (const RobotomyRequestForm &other)  : AForm ("RobotomyRequestForm", 72, 45), target("default")
+RobotomyRequestForm::RobotomyRequestForm (const RobotomyRequestForm &other)  : AForm ("RobotomyRequestForm", 72, 45)
 {
+	*this = other;
 }
 
 RobotomyRequestForm &RobotomyRequestForm::operator= (const RobotomyRequestForm &obj)
@@ -22,13 +23,13 @@ RobotomyRequestForm::~RobotomyRequestForm ()
 {
 }
 
-RobotomyRequestForm::RobotomyRequestForm (const std::string &target) : AForm ("RobotomyRequestForm", 25, 5), target(target)
+RobotomyRequestForm::RobotomyRequestForm (const std::string &target) : AForm ("RobotomyRequestForm", 72, 45), target(target)
 {
 }
 
 void RobotomyRequestForm::executeForm () const
 {
-	if (std::rand() % 2)
+	if (rand() % 2)
 		std::cout << this->target << " has been robotomized successfully" << std::endl;
 	else
 		std::cout << "The" << this->target << " robotomy failed" << std::endl;
