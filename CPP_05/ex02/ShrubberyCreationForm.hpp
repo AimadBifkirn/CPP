@@ -1,12 +1,18 @@
 #pragma once
 
 #include "AForm.hpp"
+#include <fstream>
 
-class PresidentialPardonForm : public AForm
+class ShrubberyCreationForm : public AForm
 {
+	private:
+		std::string target;
 	public:
-		PresidentialPardonForm ();
-		PresidentialPardonForm (const PresidentialPardonForm &other);
-		PresidentialPardonForm &operator= (const PresidentialPardonForm &obj);
-		~PresidentialPardonForm ();
+		ShrubberyCreationForm ();
+		ShrubberyCreationForm (const ShrubberyCreationForm &other);
+		ShrubberyCreationForm &operator= (const ShrubberyCreationForm &obj);
+		~ShrubberyCreationForm ();
+
+		ShrubberyCreationForm (const std::string &target);
+		void executeForm () const;
 };
