@@ -1,10 +1,10 @@
 #include "RobotomyRequestForm.hpp"
 
-RobotomyRequestForm::RobotomyRequestForm () : AForm ("RobotomyRequestForm", 25, 5)
+RobotomyRequestForm::RobotomyRequestForm () : AForm ("RobotomyRequestForm", 72, 45)
 {
 }
 
-RobotomyRequestForm::RobotomyRequestForm (const RobotomyRequestForm &other)  : AForm ("RobotomyRequestForm", 25, 5)
+RobotomyRequestForm::RobotomyRequestForm (const RobotomyRequestForm &other)  : AForm ("RobotomyRequestForm", 72, 45)
 {
 }
 
