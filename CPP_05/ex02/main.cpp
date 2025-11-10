@@ -5,6 +5,7 @@
 #include "Bureaucrat.hpp"
 
 int main() {
+  srand(time(0));
   try
   {
       PresidentialPardonForm form1("target");
@@ -23,6 +24,8 @@ int main() {
       std::cout << "\n----------------------------------" << std::endl;
       b.executeForm(form3);
       b.signForm(form3);
+      b.executeForm(form3);
+      b.executeForm(form3);
       b.executeForm(form3);
   }
   catch (std::exception & e)
