@@ -33,17 +33,17 @@ const std::string &Form::getName () const
 	return (this->name);
 }
 
-const bool &Form::getIsSigned () const
+bool Form::getIsSigned () const
 {
 	return (this->isSigned);
 }
 
-const int &Form::getGradeToSign () const
+int Form::getGradeToSign () const
 {
 	return (this->GradeToSign);
 }
 
-const int &Form::getGradeToExecute () const
+int Form::getGradeToExecute () const
 {
 	return (this->GradeToExecute);
 }
