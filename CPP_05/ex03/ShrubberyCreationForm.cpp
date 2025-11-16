@@ -32,7 +32,7 @@ void ShrubberyCreationForm::executeForm () const
 	std::ofstream file((this->target + "_shrubbery").c_str());
 	if (!file)
 	{
-	   std::cout << "Error: could not open file.\n";
+	   std::cout << "Error: could not open file." << std::endl;
 	   return ;
 	}
 
