@@ -29,8 +29,9 @@ RobotomyRequestForm::RobotomyRequestForm (const std::string &target) : AForm ("R
 
 void RobotomyRequestForm::executeForm () const
 {
+	std::cout << "Br Br Brgzzzz" << std::endl;
 	if (rand() % 2)
 		std::cout << this->target << " has been robotomized successfully" << std::endl;
 	else
-		std::cout << "The" << this->target << " robotomy failed" << std::endl;
+		std::cout << "The " << this->target << " robotomy failed" << std::endl;
 }
