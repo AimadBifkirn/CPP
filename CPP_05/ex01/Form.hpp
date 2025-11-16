@@ -19,7 +19,7 @@ class Form
 		~Form ();
 
 		Form (const std::string &name, int gradetosign, int gradetoexecute);
-		const std::string &getName() const;
+		std::string getName() const;
 		bool getIsSigned() const;
 		int getGradeToSign() const;
 		int getGradeToExecute() const;

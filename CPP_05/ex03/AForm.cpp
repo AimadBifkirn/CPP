@@ -28,7 +28,7 @@ AForm::AForm (const std::string &name, int gradetosign, int gradetoexecute) : na
 		throw GradeTooLowException();
 }
 
-const std::string &AForm::getName () const
+std::string AForm::getName () const
 {
 	return (this->name);
 }

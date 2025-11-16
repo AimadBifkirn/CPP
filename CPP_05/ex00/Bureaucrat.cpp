@@ -31,7 +31,7 @@ Bureaucrat::Bureaucrat (const std::string &name, int grade) : name (name)
 	this->grade = grade;	
 }
 
-const std::string &Bureaucrat::getName () const
+std::string Bureaucrat::getName () const
 {
 	return (this->name);
 }
