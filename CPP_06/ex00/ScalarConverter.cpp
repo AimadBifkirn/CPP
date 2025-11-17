@@ -19,16 +19,16 @@ ScalarConverter::~ScalarConverter ()
 
 static bool is_integer (const std::string &str)
 {
-	if (str.empthy())
+	if (str.empty())
 		return false;
 
-	size_t pos = 0;
+	int i = 0;
 
 	if (str[0] == '+' || str[0] == '-')
 	{
 		if (str.length() == 1)
 			return false;
-		pos++;
+		i++;
 	}
 
 	for (i; str[i]; i++)
@@ -41,9 +41,29 @@ static bool is_integer (const std::string &str)
 
 static bool is_char (const std::string &str)
 {
-	return (str.length() == 1 && std::isprint(str[0]) && !std::isdigit(str[0]));
+	return (str.length() == 1 && str.empty() && !std::isdigit(str[0]));
 }
 
+static bool is_float (const std::string &str)
+{
+	if (str.empty())
+		return false;
+	
+	int i = 0;
+
+	if (str[0] == '+' || str[0] == '-')
+	{
+		if (str.length() == 1)
+			return false;
+		i++;
+	}
+	for (i; str[i]; i++)
+	{
+		if (i == 1 && !std::isdigit(str[i]))
+			return false;
+		else if 
+	}
+}
 
 void ScalarConverter::convert (const std::string &str)
 {
