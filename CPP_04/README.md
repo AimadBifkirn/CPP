@@ -198,36 +198,134 @@ public:
 #### Concept
 Create an Animal hierarchy demonstrating correct (virtual) and incorrect (non-virtual) polymorphism.
 
-#### Implementation
+#### My Implementation
 
-**Animal.hpp** (Correct implementation):
+**Animal Base Class** (`Animal.hpp`):
 ```cpp
-#ifndef ANIMAL_HPP
-#define ANIMAL_HPP
+class Animal
+{
+	protected:
+		std::string type;
+	public:
+		Animal ();
+		Animal (const Animal &other);
+		Animal &operator= (const Animal &obj);
+		virtual ~Animal ();  // Virtual destructor - CRITICAL!
 
-#include <iostream>
-#include <string>
-
-class Animal {
-protected:
-    std::string type;
-    
-public:
-    Animal();
-    Animal(const Animal& other);
-    Animal& operator=(const Animal& other);
-    virtual ~Animal();  // Virtual destructor!
-    
-    const std::string& getType() const;
-    virtual void makeSound() const;  // Virtual function!
+		const std::string &getType(void) const;
+		virtual void makeSound() const;  // Virtual function - enables polymorphism
 };
-
-#endif
 ```
 
-**Dog.hpp**:
+**Animal Implementation** (`Animal.cpp`):
 ```cpp
-#ifndef DOG_HPP
+Animal::Animal () : type("Animal")
+{
+	std::cout << "Animal: Default constructor called" << std::endl;
+}
+
+Animal::~Animal ()
+{
+	std::cout << "Animal: Destructor called" << std::endl;
+}
+
+void Animal::makeSound() const
+{
+	std::cout << "Animal sound!!" << std::endl;
+}
+
+const std::string &Animal::getType(void) const
+{
+	return (type);
+}
+```
+
+**Cat Derived Class** (`Cat.hpp`):
+```cpp
+class Cat : public Animal
+{
+	public:
+		Cat ();
+		Cat (const Cat &other);
+		Cat &operator= (const Cat &obj);
+		~Cat ();
+
+		void makeSound() const;  // Override virtual function
+};
+```
+
+**Cat Implementation** (`Cat.cpp`):
+```cpp
+Cat::Cat ()
+{
+	this->type = "Cat";
+	std::cout << "Cat: Default constructor called" << std::endl;
+}
+
+Cat::~Cat ()
+{
+	std::cout << "Cat: Destructor called" << std::endl;
+}
+
+void Cat::makeSound() const  // Overrides Animal::makeSound()
+{
+	std::cout << "Meaw Meaw!!" << std::endl;
+}
+```
+
+#### How Polymorphism Works
+
+**1. Virtual Functions Enable Runtime Polymorphism:**
+
+```cpp
+const Animal* animal = new Cat();
+animal->makeSound();  // Calls Cat::makeSound(), not Animal::makeSound()
+delete animal;
+```
+
+Output:
+```
+Animal: Default constructor called
+Cat: Default constructor called
+Meaw Meaw!!
+Cat: Destructor called
+Animal: Destructor called
+```
+
+**Why?** The `virtual` keyword makes the function polymorphic. At runtime, C++ looks at the actual object type (Cat), not the pointer type (Animal*).
+
+**2. Virtual Destructor is CRITICAL:**
+
+```cpp
+virtual ~Animal ();  // In base class
+```
+
+Without `virtual`:
+- `delete animal` would only call `Animal::~Animal()`
+- `Cat::~Cat()` would never be called
+- Memory leak if Cat has dynamic memory!
+
+With `virtual`:
+- `delete animal` calls `Cat::~Cat()` first
+- Then calls `Animal::~Animal()`
+- Proper cleanup guaranteed
+
+**3. WrongAnimal Example (non-virtual):**
+
+To demonstrate the importance of `virtual`, there's also a `WrongAnimal` class without virtual functions:
+
+```cpp
+class WrongAnimal {
+public:
+	void makeSound() const;  // NOT virtual
+	~WrongAnimal();          // NOT virtual
+};
+
+WrongAnimal* wrong = new WrongCat();
+wrong->makeSound();  // Calls WrongAnimal::makeSound(), NOT WrongCat::makeSound()!
+```
+
+This is **static binding** (compile-time) vs **dynamic binding** (runtime) with virtual.
 #define DOG_HPP
 
 #include "Animal.hpp"

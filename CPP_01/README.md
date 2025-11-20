@@ -142,53 +142,109 @@ Create a Zombie class with two different allocation methods:
 - `newZombie()`: Creates a zombie on the heap (returns pointer)
 - `randomChump()`: Creates a zombie on the stack (local variable)
 
-#### Implementation
-```cpp
-class Zombie {
-private:
-    std::string name;
-    
-public:
-    Zombie(std::string name);
-    ~Zombie();
-    void announce();  // Prints "name: BraiiiiiiinnnzzzZ..."
-};
+#### My Implementation
 
-// Heap allocation - zombie survives function return
-Zombie* newZombie(std::string name) {
-    return new Zombie(name);
+**Zombie Class** (`Zombie.hpp`):
+```cpp
+class Zombie
+{
+	private:
+			std::string name;
+	public:
+			void	announce(void);
+			Zombie(std::string n_name);
+			~Zombie(void);
+};
+```
+
+**Constructor and Destructor** (`Zombie.cpp`):
+```cpp
+Zombie::Zombie(std::string n_name)
+{
+	name = n_name;
 }
 
-// Stack allocation - zombie destroyed at function end
-void randomChump(std::string name) {
-    Zombie zombie(name);
-    zombie.announce();
-}  // Zombie destroyed here
+Zombie::~Zombie(void)
+{
+	std::cout << "zombie -> " << this->name << ": died" << std::endl;
+}
+
+void	Zombie::announce(void)
+{
+	std::cout << name << ": BraiiiiiiinnnzzzZ..." << std::endl;
+}
+```
+
+**Heap Allocation** (`newZombie.cpp`):
+```cpp
+Zombie*	newZombie(std::string name)
+{
+	return (new Zombie(name));
+}
+```
+
+**Stack Allocation** (`randomChump.cpp`):
+```cpp
+void	randomChump(std::string name)
+{
+	Zombie	new_zombie(name);
+	new_zombie.announce();
+}  // Zombie destroyed here automatically
+```
+
+#### How I Solved It
+
+**Key Design Choices:**
+
+1. **Simple Constructor**: I used a constructor that takes the zombie's name as a parameter. This ensures every zombie has a name when created.
+
+2. **Destructor Message**: The destructor prints a message showing which zombie died. This is crucial for understanding when objects are destroyed:
+   ```cpp
+   std::cout << "zombie -> " << this->name << ": died" << std::endl;
+   ```
+
+3. **`newZombie()` Function**: Creates a zombie on the heap using `new`. The zombie persists after the function returns because it's on the heap:
+   ```cpp
+   return (new Zombie(name));
+   ```
+   The caller is responsible for deleting this zombie.
+
+4. **`randomChump()` Function**: Creates a zombie as a local variable (on the stack). It announces itself, then is automatically destroyed when the function ends:
+   ```cpp
+   Zombie	new_zombie(name);  // Created on stack
+   new_zombie.announce();
+   // Automatically destroyed here
+   ```
+
+#### When you run the program, you'll observe:
+
+```
+Stack zombie announces...
+Foo: BraiiiiiiinnnzzzZ...
+zombie -> Foo: died        // Stack zombie destroyed immediately
+
+Heap zombie announces...
+Bar: BraiiiiiiinnnzzzZ...
+... (program continues)
+zombie -> Bar: died        // Heap zombie destroyed when we delete it
 ```
 
 #### Key Observations
-When you run the program, you'll see:
-```
-Creating heap zombie...
-Foo: BraiiiiiiinnnzzzZ...
-Creating stack zombie...
-Bar: BraiiiiiiinnnzzzZ...
-Bar destroyed        // Stack zombie destroyed immediately
-...
-Foo destroyed        // Heap zombie destroyed when we delete it
-```
+
+**Stack vs Heap Lifetime:**
+- **Stack zombie** (`randomChump`): Lives only within the function scope. Automatically destroyed when function ends.
+- **Heap zombie** (`newZombie`): Lives until explicitly deleted with `delete`. Can be passed around and used anywhere.
+
+**When to use each:**
+- Use **stack** when the object's lifetime is limited to a function scope
+- Use **heap** when the object needs to outlive the function or its size is large
 
 #### Key Takeaways
 - Heap objects survive beyond function scope
 - Stack objects are automatically destroyed
 - Always `delete` what you `new`
-- Use heap when object lifetime needs to extend beyond current scope
-
-#### Common Mistakes
-1. Forgetting to `delete` heap-allocated zombies (memory leak)
-2. Trying to use stack zombie after function returns
-3. Deleting stack-allocated objects (crash!)
-4. Not understanding when destructors are called
+- Destructor messages help visualize object lifetimes
+- The `new` keyword returns a pointer to the allocated memory
 
 ---
 
@@ -200,6 +256,7 @@ Foo destroyed        // Heap zombie destroyed when we delete it
 - Default constructor necessity
 - Deleting arrays with `delete[]`
 - Initializing multiple objects
+- Error handling with `new`
 
 #### Concept
 Create a function that allocates N zombies in a single allocation:
@@ -208,56 +265,145 @@ Create a function that allocates N zombies in a single allocation:
 Zombie* zombieHorde(int N, std::string name);
 ```
 
-#### Implementation
+#### My Implementation
+
+**Modified Zombie Class** (`Zombie.hpp`):
 ```cpp
-Zombie* zombieHorde(int N, std::string name) {
-    // Allocate array of N zombies
-    Zombie* horde = new Zombie[N];
-    
-    // Initialize each zombie
-    for (int i = 0; i < N; i++) {
-        horde[i].setName(name);
-        // or use placement new for constructor
-    }
-    
-    return horde;
+class Zombie
+{
+	private:
+			std::string name;
+	public:
+			void	announce(void);
+			void	setName(std::string n_name);  // Added setter for array initialization
+			~Zombie(void);
+};
+```
+
+Note: Unlike ex00, this version doesn't have a parameterized constructor. When allocating an array with `new Zombie[N]`, the default constructor is called for each element.
+
+**Zombie Implementation** (`Zombie.cpp`):
+```cpp
+void	Zombie::announce(void)
+{
+	std::cout << name << ": BraiiiiiiinnnzzzZ..." << std::endl;
 }
 
-// Usage in main
-Zombie* horde = zombieHorde(10, "HordeZombie");
-for (int i = 0; i < 10; i++) {
-    horde[i].announce();
+void	Zombie::setName(std::string n_name)
+{
+	name = n_name;
 }
-delete[] horde;  // Must use delete[] for arrays!
+
+Zombie::~Zombie(void)
+{
+	std::cout << "zombie -> " << this->name << ": died" << std::endl;
+}
+```
+
+**zombieHorde Function** (`zombieHorde.cpp`):
+```cpp
+#include "Zombie.hpp"
+#include <cstdlib>
+
+Zombie*	zombieHorde(int N, std::string name)
+{
+	Zombie *res = new (std::nothrow) Zombie[N];
+
+	if (!res)
+	{
+		std::cerr << "new failed\n";
+		exit (1);
+	}
+	for (int i = 0; i < N; i++)
+		res[i].setName(name);
+	return (res);
+}
+```
+
+#### How I Solved It
+
+**1. Array Allocation with Error Handling:**
+
+I used `new (std::nothrow)` instead of plain `new`:
+```cpp
+Zombie *res = new (std::nothrow) Zombie[N];
+```
+
+**Why?** 
+- Regular `new` throws an exception on failure (not allowed in C++98 without exception handling)
+- `new (std::nothrow)` returns `NULL` on failure, which we can check
+- This allows graceful error handling
+
+**2. Checking for Allocation Failure:**
+```cpp
+if (!res)
+{
+	std::cerr << "new failed\n";
+	exit (1);
+}
+```
+
+If allocation fails (e.g., requesting too much memory), the program exits cleanly with an error message.
+
+**3. Initializing the Array:**
+
+Since array allocation calls the default constructor (which doesn't set names), I loop through and set each zombie's name:
+```cpp
+for (int i = 0; i < N; i++)
+	res[i].setName(name);
+```
+
+**4. Return the Array:**
+
+The function returns a pointer to the first zombie in the array. The caller is responsible for:
+- Using the zombies
+- Calling `delete[]` (not `delete`!) to free the memory
+
+#### Usage Example
+
+```cpp
+int N = 5;
+Zombie* horde = zombieHorde(N, "Walker");
+
+// Use the horde
+for (int i = 0; i < N; i++) {
+	horde[i].announce();
+}
+
+// Clean up - MUST use delete[] for arrays
+delete[] horde;
 ```
 
 #### Critical Points
 
-**Array Allocation**:
+**Array Allocation vs Single Object:**
 ```cpp
 Zombie* single = new Zombie("Name");    // Single object
-delete single;                          // Use delete
+delete single;                           // Use delete
 
-Zombie* array = new Zombie[10];         // Array of objects
-delete[] array;                         // Use delete[]
+Zombie* array = new Zombie[10];         // Array
+delete[] array;                          // Use delete[] - brackets are crucial!
 ```
 
-**Default Constructor Requirement**:
-When you allocate an array (`new Zombie[N]`), each object is created using the default constructor. You need one:
+**Why the difference?**
+- `delete[]` calls the destructor for EACH element in the array
+- `delete` only calls destructor for one object
+- Using wrong one causes memory leaks or undefined behavior
 
-```cpp
-class Zombie {
-public:
-    Zombie();              // Default constructor needed for arrays
-    Zombie(std::string n); // Parameterized constructor
-};
-```
+**Default Constructor Requirement:**
+
+When you write `new Zombie[N]`, C++ calls the default constructor N times. Therefore:
+- The class must have a default constructor (compiler-generated or explicit)
+- Or use placement new (advanced topic)
+
+In my implementation, the compiler generates a default constructor since I didn't define any constructors in ex01's Zombie class.
 
 #### Key Takeaways
-- `new[]` requires `delete[]` (not `delete`)
-- Array allocation calls default constructor for each element
-- Single allocation is more efficient than multiple individual allocations
-- All zombies in the horde share the same name (unless you modify them individually)
+- Array allocation requires default constructor
+- Always use `delete[]` for arrays allocated with `new[]`
+- `new (std::nothrow)` allows checking for allocation failures
+- Each element in the array is a separate object with its own destructor
+- Initialize array elements after allocation if they need specific values
 
 #### Common Mistakes
 1. Using `delete` instead of `delete[]` for arrays (undefined behavior!)
@@ -273,50 +419,104 @@ public:
 #### What It Teaches
 - Difference between pointers and references
 - Memory addresses
-- Dereferencing
+- Dereferencing syntax
+- How references are aliases for existing variables
 
 #### Concept
-Demonstrate pointers vs. references with a simple string:
+Demonstrate pointers vs. references with a simple string to understand how they both refer to the same memory location but with different syntax.
 
+#### My Implementation
+
+Here's my complete `main.cpp`:
 ```cpp
-int main() {
-    std::string str = "HI THIS IS BRAIN";
-    std::string* stringPTR = &str;  // Pointer to str
-    std::string& stringREF = str;   // Reference to str
-    
-    // Print addresses
-    std::cout << "Address of str:       " << &str << std::endl;
-    std::cout << "Address in stringPTR: " << stringPTR << std::endl;
-    std::cout << "Address of stringREF: " << &stringREF << std::endl;
-    
-    // Print values
-    std::cout << "Value of str:       " << str << std::endl;
-    std::cout << "Value via stringPTR: " << *stringPTR << std::endl;
-    std::cout << "Value via stringREF: " << stringREF << std::endl;
-    
-    return 0;
+#include <string>
+#include <iostream>
+
+int main()
+{
+	std::string str = "HI THIS IS BRAIN";
+	std::string *stringPTR = &str;
+	std::string &stringREF = str;
+
+	std::cout << "The memory address of the string variable : " << &str << std::endl;
+	std::cout << "The memory address held by stringPTR      : " << stringPTR << std::endl;
+	std::cout << "The memory address held by stringREF      : " << &stringREF << std::endl;
+
+	std::cout << "The value of the string variable  : " << str << std::endl;
+	std::cout << "The value pointed to by stringPTR : " << *stringPTR << std::endl;
+	std::cout << "The value pointed to by stringREF : " << stringREF << std::endl;
 }
+```
+
+#### How I Solved It
+
+**1. Creating the Original String:**
+```cpp
+std::string str = "HI THIS IS BRAIN";
+```
+This creates a string variable on the stack.
+
+**2. Creating a Pointer:**
+```cpp
+std::string *stringPTR = &str;
+```
+- `&str` gets the address of `str`
+- `stringPTR` stores that address
+- To get the value, you must dereference with `*stringPTR`
+
+**3. Creating a Reference:**
+```cpp
+std::string &stringREF = str;
+```
+- `stringREF` is an alias for `str`
+- No need to use `*` to access the value
+- Acts exactly like the original variable
+
+**4. Printing Addresses:**
+```cpp
+std::cout << &str;        // Address of original
+std::cout << stringPTR;   // Pointer already holds address
+std::cout << &stringREF;  // Address of reference (same as str)
+```
+
+**5. Printing Values:**
+```cpp
+std::cout << str;         // Direct access
+std::cout << *stringPTR;  // Dereference pointer with *
+std::cout << stringREF;   // Reference acts like variable
 ```
 
 #### Expected Output
 ```
-Address of str:       0x7ffc1234
-Address in stringPTR: 0x7ffc1234
-Address of stringREF: 0x7ffc1234
+The memory address of the string variable : 0x7ffc12345678
+The memory address held by stringPTR      : 0x7ffc12345678
+The memory address held by stringREF      : 0x7ffc12345678
 
-Value of str:       HI THIS IS BRAIN
-Value via stringPTR: HI THIS IS BRAIN
-Value via stringREF: HI THIS IS BRAIN
+The value of the string variable  : HI THIS IS BRAIN
+The value pointed to by stringPTR : HI THIS IS BRAIN
+The value pointed to by stringREF : HI THIS IS BRAIN
 ```
 
 #### Key Observations
-- All three point to the **same memory address**
-- References are essentially const pointers with automatic dereferencing
-- Pointers need `*` to access value, references use variable directly
+
+**All three have the same address** - they all refer to the same memory location!
+
+**Syntax Differences:**
+| Operation | Pointer | Reference |
+|-----------|---------|-----------|
+| Declaration | `Type* ptr = &var;` | `Type& ref = var;` |
+| Get address | `ptr` (already holds it) | `&ref` |
+| Get value | `*ptr` (dereference) | `ref` (direct) |
+
+**When to use each:**
+- **Pointer**: Can be null, can be reassigned, optional parameters
+- **Reference**: Cannot be null, cannot be reassigned, cleaner syntax
 
 #### Key Takeaways
 - References and pointers can access the same data
-- References are safer (can't be null, can't be reassigned)
+- References are aliases - they ARE the original variable
+- Pointers store addresses - they POINT to the original variable
+- References have cleaner syntax (no * needed)
 - Both avoid copying large objects
 
 ---
@@ -326,98 +526,202 @@ Value via stringREF: HI THIS IS BRAIN
 
 #### What It Teaches
 - When to use references vs. pointers
-- Const references
+- Const references for getters
 - Object composition
 - Reference member variables
+- Initializer lists with references
 
 #### Concept
 Create two human classes that use weapons differently:
-- **HumanA**: Always has a weapon (reference)
-- **HumanB**: May or may not have a weapon (pointer)
+- **HumanA**: Always has a weapon (uses reference)
+- **HumanB**: May or may not have a weapon (uses pointer)
 
-#### Implementation
+#### My Implementation
 
-**Weapon Class**:
+**Weapon Class** (`Weapon.hpp`):
 ```cpp
-class Weapon {
-private:
-    std::string type;
-    
-public:
-    Weapon(std::string type);
-    const std::string& getType() const;
-    void setType(std::string type);
+class Weapon
+{
+	private:
+		std::string	type;
+	public:
+		const std::string& getType();
+		void	setType(std::string new_type);
+		Weapon(std::string	new_type);
 };
 ```
 
-**HumanA** (with reference):
+**Weapon Implementation** (`Weapon.cpp`):
 ```cpp
-class HumanA {
-private:
-    std::string name;
-    Weapon& weapon;  // Reference - must be initialized
-    
-public:
-    HumanA(std::string name, Weapon& weapon) 
-        : name(name), weapon(weapon) {
-        // weapon MUST be initialized in initializer list
-    }
-    
-    void attack() {
-        std::cout << name << " attacks with " 
-                  << weapon.getType() << std::endl;
-    }
+const std::string& Weapon::getType()
+{
+	return (type);
+}
+
+void	Weapon::setType(std::string new_type)
+{
+	type = new_type;
+}
+
+Weapon::Weapon(std::string	new_type)
+{
+	type = new_type;
+}
+```
+
+**HumanA Class** (`HumanA.hpp` - uses reference):
+```cpp
+class HumanA
+{
+	private:
+		Weapon		&slah;   // Reference to weapon
+		std::string	name;
+	public:
+		HumanA (std::string new_name, Weapon &new_weapon);
+		void	attack();
 };
 ```
 
-**HumanB** (with pointer):
+**HumanA Implementation** (`HumanA.cpp`):
 ```cpp
-class HumanB {
-private:
-    std::string name;
-    Weapon* weapon;  // Pointer - can be null
-    
-public:
-    HumanB(std::string name) : name(name), weapon(nullptr) {}
-    
-    void setWeapon(Weapon& weapon) {
-        this->weapon = &weapon;
-    }
-    
-    void attack() {
-        if (weapon)
-            std::cout << name << " attacks with " 
-                      << weapon->getType() << std::endl;
-    }
+void	HumanA::attack(void)
+{
+	std::cout  << this->name << " attacks with their " 
+	           << this->slah.getType() << std::endl;
+}
+
+HumanA::HumanA(std::string new_name, Weapon &new_wepon)
+: slah(new_wepon), name(new_name)
+{
+	// Reference MUST be initialized in initializer list
+}
+```
+
+**HumanB Class** (`HumanB.hpp` - uses pointer):
+```cpp
+class HumanB
+{
+	private:
+		Weapon		*slah;   // Pointer to weapon
+		std::string	name;
+	public:
+		HumanB(std::string new_name);
+		void	attack();
+		void	setWeapon(Weapon &new_weapon);
 };
 ```
 
-#### Usage Example
+**HumanB Implementation** (`HumanB.cpp`):
 ```cpp
-// HumanA - weapon required at construction
-Weapon club = Weapon("crude spiked club");
-HumanA bob("Bob", club);
-bob.attack();
-club.setType("some other type of club");
-bob.attack();  // Uses updated weapon
+void	HumanB::attack(void)
+{
+	std::cout  << this->name << " attacks with their " 
+	           << this->slah->getType() << std::endl;
+}
 
-// HumanB - weapon optional
-HumanB jim("Jim");
-jim.attack();  // No weapon yet
-Weapon sword = Weapon("sword");
-jim.setWeapon(sword);
-jim.attack();  // Now has weapon
+void	HumanB::setWeapon(Weapon &new_weapon)
+{
+	slah = &new_weapon;
+}
+
+HumanB::HumanB(std::string new_name)
+{
+	name = new_name;
+	// Weapon pointer not initialized - will be set later
+}
 ```
+
+#### How I Solved It
+
+**1. Why HumanA Uses a Reference:**
+
+```cpp
+Weapon &slah;  // Reference member
+```
+
+HumanA ALWAYS has a weapon from the moment it's created:
+- References cannot be null
+- References cannot be reassigned
+- Must be initialized in the constructor initializer list
+
+```cpp
+HumanA::HumanA(std::string new_name, Weapon &new_wepon)
+: slah(new_wepon), name(new_name)  // Initialize reference here
+{
+}
+```
+
+**2. Why HumanB Uses a Pointer:**
+
+```cpp
+Weapon *slah;  // Pointer member
+```
+
+HumanB might not have a weapon initially:
+- Pointers can be null
+- Pointers can be reassigned
+- Can be set later with `setWeapon()`
+
+```cpp
+HumanB::HumanB(std::string new_name)
+{
+	name = new_name;
+	// slah not initialized - it's okay for pointers
+}
+
+void	HumanB::setWeapon(Weapon &new_weapon)
+{
+	slah = &new_weapon;  // Take address of reference parameter
+}
+```
+
+**3. Accessing the Weapon:**
+
+With reference (HumanA):
+```cpp
+this->slah.getType()  // Use dot operator
+```
+
+With pointer (HumanB):
+```cpp
+this->slah->getType()  // Use arrow operator
+```
+
+**4. Const Reference Return:**
+
+The `getType()` method returns a const reference:
+```cpp
+const std::string& getType();
+```
+
+Benefits:
+- Avoids copying the string (efficient)
+- `const` prevents caller from modifying the internal type
+- Returns a reference to the actual string, not a copy
 
 #### Key Design Decision
-- **HumanA uses reference**: The weapon is mandatory and won't change
-- **HumanB uses pointer**: The weapon is optional and can be set later
+
+**When to use Reference vs Pointer:**
+
+Use **Reference** when:
+- The object MUST exist (never null)
+- The relationship won't change
+- You want to prevent reassignment
+- Example: HumanA always has a weapon
+
+Use **Pointer** when:
+- The object might not exist (can be null)
+- The relationship might change
+- You need to reassign later
+- Example: HumanB might get a weapon later
 
 #### Key Takeaways
 - References must be initialized in the constructor initializer list
-- References cannot be reassigned (perfect for mandatory dependencies)
+- References cannot be null or reassigned (perfect for mandatory dependencies)
 - Pointers can be null and reassigned (perfect for optional dependencies)
-- Const references prevent modification: `const std::string& getType()`
+- Const references for getters prevent unwanted modifications
+- Use `.` operator with references, `->` operator with pointers
+- Taking the address of a reference (`&ref`) gives you the address of the original object
 
 #### Common Mistakes
 1. Not initializing reference in initializer list
@@ -445,83 +749,184 @@ Create a program that replaces all occurrences of s1 with s2 in a file:
 
 Creates `filename.replace` with all s1 occurrences replaced by s2.
 
-#### Implementation
-```cpp
-#include <iostream>
-#include <fstream>
-#include <string>
+#### My Implementation
 
-int main(int argc, char** argv) {
-    if (argc != 4) {
-        std::cout << "Usage: ./replace filename s1 s2" << std::endl;
-        return 1;
-    }
-    
-    std::string filename = argv[1];
-    std::string s1 = argv[2];
-    std::string s2 = argv[3];
-    
-    // Open input file
-    std::ifstream infile(filename.c_str());
-    if (!infile.is_open()) {
-        std::cout << "Error: cannot open " << filename << std::endl;
-        return 1;
-    }
-    
-    // Open output file
-    std::ofstream outfile((filename + ".replace").c_str());
-    if (!outfile.is_open()) {
-        std::cout << "Error: cannot create output file" << std::endl;
-        return 1;
-    }
-    
-    // Read and replace
-    std::string line;
-    while (std::getline(infile, line)) {
-        size_t pos = 0;
-        while ((pos = line.find(s1, pos)) != std::string::npos) {
-            line.erase(pos, s1.length());
-            line.insert(pos, s2);
-            pos += s2.length();
-        }
-        outfile << line << std::endl;
-    }
-    
-    infile.close();
-    outfile.close();
-    
-    return 0;
+Here's my complete `main.cpp`:
+
+```cpp
+#include "main.hpp"
+
+int main(int argc, char **argv)
+{
+	if (argc != 4)
+	{
+		std::cerr << "Arguments number must be 3!!" << std::endl;
+		return (1);
+	}
+	if ((std::string(argv[2])).empty() || (std::string(argv[3])).empty())
+	{
+		std::cerr << "Empty args are not exepted !" << std::endl;
+		return (1);
+	}
+	std::ifstream inputFile(argv[1]);
+	if (!inputFile)
+	{
+		std::cerr << "Failed to open the file : " << argv[1] << std::endl;
+		return (1);
+	}
+	std::ofstream outputFile(((std::string)argv[1] + ".replace").c_str());
+	if (!outputFile)
+	{
+		inputFile.close();
+		std::cerr << "Failed to create the output file(.replace) !!" << std::endl;
+		return (1);
+	}
+	std::string	line;
+	while (std::getline(inputFile,line))
+	{
+		size_t	pos = 0;
+		while ((pos = line.find(argv[2], pos)) != std::string::npos)
+		{
+			line.erase(pos, std::string(argv[2]).length());
+			line.insert(pos, std::string(argv[3]));
+			pos += ((std::string)argv[3]).length();
+		}
+		outputFile << line;
+		if (!inputFile.eof())
+			outputFile << std::endl;
+	}
+	inputFile.close();
+	outputFile.close();
+	return (0);
 }
 ```
 
-#### Key Functions
-- `std::ifstream`: Input file stream
-- `std::ofstream`: Output file stream
-- `std::getline()`: Read line by line
-- `std::string::find()`: Find substring
-- `std::string::erase()`: Remove characters
-- `std::string::insert()`: Insert string
+#### How I Solved It
 
-#### Edge Cases to Handle
-1. Empty s1 (would cause infinite loop)
-2. File doesn't exist
-3. Cannot create output file
-4. s1 not found in file
-5. Overlapping replacements
+**1. Argument Validation:**
+
+First, I check if we have exactly 4 arguments (program name + 3 parameters):
+```cpp
+if (argc != 4)
+{
+	std::cerr << "Arguments number must be 3!!" << std::endl;
+	return (1);
+}
+```
+
+Then verify that s1 and s2 are not empty (empty s1 would cause infinite loop):
+```cpp
+if ((std::string(argv[2])).empty() || (std::string(argv[3])).empty())
+{
+	std::cerr << "Empty args are not exepted !" << std::endl;
+	return (1);
+}
+```
+
+**2. Opening Files:**
+
+Open input file for reading:
+```cpp
+std::ifstream inputFile(argv[1]);
+if (!inputFile)
+{
+	std::cerr << "Failed to open the file : " << argv[1] << std::endl;
+	return (1);
+}
+```
+
+Create output file (filename + ".replace"):
+```cpp
+std::ofstream outputFile(((std::string)argv[1] + ".replace").c_str());
+if (!outputFile)
+{
+	inputFile.close();
+	std::cerr << "Failed to create the output file(.replace) !!" << std::endl;
+	return (1);
+}
+```
+
+Note: `.c_str()` is needed for C++98 compatibility.
+
+**3. Line-by-Line Processing:**
+
+Read each line from the input file:
+```cpp
+while (std::getline(inputFile, line))
+```
+
+**4. String Replacement Logic:**
+
+For each line, find and replace all occurrences of s1:
+```cpp
+size_t	pos = 0;
+while ((pos = line.find(argv[2], pos)) != std::string::npos)
+{
+	line.erase(pos, std::string(argv[2]).length());  // Remove s1
+	line.insert(pos, std::string(argv[3]));          // Insert s2
+	pos += ((std::string)argv[3]).length();          // Move past replacement
+}
+```
+
+**Key points:**
+- `find(s1, pos)` searches for s1 starting from position `pos`
+- Returns `std::string::npos` if not found
+- `erase(pos, length)` removes characters
+- `insert(pos, s2)` inserts s2 at position
+- Update `pos` to skip past the newly inserted string (prevents infinite loop if s2 contains s1)
+
+**5. Writing Output:**
+
+Write the modified line to output file:
+```cpp
+outputFile << line;
+if (!inputFile.eof())
+	outputFile << std::endl;
+```
+
+I check `eof()` to avoid adding an extra newline at the end of the file.
+
+**6. Cleanup:**
+
+Close both files:
+```cpp
+inputFile.close();
+outputFile.close();
+```
+
+#### Example Usage
+
+```bash
+$ echo "Hello world, hello universe" > test.txt
+$ ./replace test.txt hello hi
+$ cat test.txt.replace
+Hi world, hi universe
+```
+
+#### Key Functions Used
+- `std::ifstream`: Input file stream (reading)
+- `std::ofstream`: Output file stream (writing)
+- `std::getline()`: Read line by line
+- `std::string::find()`: Find substring, returns position or `npos`
+- `std::string::erase()`: Remove characters at position
+- `std::string::insert()`: Insert string at position
+- `std::string::npos`: Constant representing "not found"
+
+#### Edge Cases Handled
+1. ✅ Wrong number of arguments
+2. ✅ Empty s1 or s2 (prevents infinite loop)
+3. ✅ File doesn't exist (error message)
+4. ✅ Cannot create output file (error message)
+5. ✅ Multiple occurrences on same line
+6. ✅ No extra newline at end of file
 
 #### Key Takeaways
-- File streams work like `cin`/`cout`
-- Always check if file opened successfully
-- Close files when done
-- String find() returns `std::string::npos` if not found
-- Be careful with string position updates after replacement
-
-#### Common Mistakes
-1. Not checking if file opened
-2. Infinite loop when s1 is empty or s2 contains s1
-3. Not updating position after replacement
-4. Forgetting to close files
-5. Using `c_str()` for C++98 compatibility
+- File streams work like `cin`/`cout` but with files
+- Always check if file opened successfully with `if (!file)`
+- Close files when done (good practice, though destructors do it automatically)
+- `find()` returns `std::string::npos` when substring not found
+- Update position after replacement to avoid infinite loops
+- Use `std::cerr` for error messages instead of `std::cout`
 
 ---
 
@@ -531,100 +936,189 @@ int main(int argc, char** argv) {
 #### What It Teaches
 - Member function pointers
 - Array of function pointers
-- Switch statement alternative
+- Avoiding long if-else chains
 - Cleaner code organization
+- Table-driven programming
 
 #### Concept
-Create a class `Harl` that complains at different levels without using long if-else chains.
+Create a class `Harl` that complains at different levels (DEBUG, INFO, WARNING, ERROR) without using long if-else chains. Use function pointers for elegant dispatch.
 
-#### Implementation
+#### My Implementation
+
+**Harl Class** (`Harl.hpp`):
 ```cpp
-class Harl {
-private:
-    void debug();
-    void info();
-    void warning();
-    void error();
-    
-public:
-    void complain(std::string level);
+class Harl
+{
+	private:
+		void debug( void );
+		void info( void );
+		void warning( void );
+		void error( void );
+	public:
+		void complain( std::string level );
 };
+```
 
-void Harl::complain(std::string level) {
-    // Array of function pointers
-    void (Harl::*functions[])() = {
-        &Harl::debug,
-        &Harl::warning,
-        &Harl::info,
-        &Harl::error
-    };
-    
-    std::string levels[] = {
-        "DEBUG",
-        "INFO",
-        "WARNING",
-        "ERROR"
-    };
-    
-    // Find and call the appropriate function
-    for (int i = 0; i < 4; i++) {
-        if (levels[i] == level) {
-            (this->*functions[i])();
-            return;
-        }
-    }
+**Harl Implementation** (`Harl.cpp`):
+```cpp
+#include "Harl.hpp"
+
+void	Harl::debug(void)
+{
+	std::cout << \
+	"[ DEBUG ]\nI love having extra bacon for my 7XL-double-cheese-triple-pickle-special-ketchup burger. I really do!" \
+	<< std::endl;
+}
+
+void	Harl::info(void)
+{
+	std::cout << \
+	"[ INFO ]\nI cannot believe adding extra bacon costs more money. You didn't put enough bacon in my burger! If you did, I wouldn't be asking for more!" \
+	<< std::endl;
+}
+
+void	Harl::warning(void)
+{
+	std::cout << \
+	"[ WARNING ]\nI think I deserve to have some extra bacon for free. I've been coming for years whereas you started working here since last month." \
+	<< std::endl;
+}
+
+void	Harl::error(void)
+{
+	std::cout << \
+	"[ ERROR ]\nThis is unacceptable! I want to speak to the manager now." \
+	<< std::endl;
+}
+
+void	Harl::complain(std::string level)
+{
+	std::string	levels[] = {"DEBUG", "INFO", "WARNING", "ERROR"};
+	void(Harl::*functions[])() = {&Harl::debug, &Harl::info, &Harl::warning, &Harl::error};
+	for (int i = 0; i < 4; i++)
+	{
+		if (levels[i] == level)
+		{
+			(this->*functions[i])();
+			return ;
+		}
+	}
 }
 ```
 
-#### Member Function Pointer Syntax
+#### How I Solved It
+
+**1. Private Complaint Functions:**
+
+Each severity level has its own private method:
 ```cpp
-// Declaration
-void (Harl::*funcPtr)();
+void debug(void);
+void info(void);
+void warning(void);
+void error(void);
+```
 
-// Assignment
-funcPtr = &Harl::debug;
+These are private because they should only be called through `complain()`.
 
-// Calling
-(this->*funcPtr)();
-// or
-(object.*funcPtr)();
+**2. Function Pointer Array:**
+
+The magic happens in the `complain()` method. I create two parallel arrays:
+```cpp
+std::string	levels[] = {"DEBUG", "INFO", "WARNING", "ERROR"};
+void(Harl::*functions[])() = {&Harl::debug, &Harl::info, &Harl::warning, &Harl::error};
+```
+
+**Breaking down the syntax:**
+- `void(Harl::*functions[])()` - Array of pointers to member functions
+- `void` - Return type
+- `Harl::*` - Pointer to member of Harl class
+- `functions[]` - Array name
+- `()` - Function takes no parameters
+- `&Harl::debug` - Address of the member function
+
+**3. Finding and Calling the Function:**
+
+Loop through levels to find a match:
+```cpp
+for (int i = 0; i < 4; i++)
+{
+	if (levels[i] == level)
+	{
+		(this->*functions[i])();  // Call the function
+		return ;
+	}
+}
+```
+
+**Calling syntax:** `(this->*functions[i])()`
+- `this->*` - Dereference member function pointer on this object
+- `functions[i]` - The function pointer
+- `()` - Call the function
+
+**4. Why This Approach?**
+
+**Without function pointers (bad):**
+```cpp
+void complain(std::string level) {
+	if (level == "DEBUG")
+		debug();
+	else if (level == "INFO")
+		info();
+	else if (level == "WARNING")
+		warning();
+	else if (level == "ERROR")
+		error();
+}
+```
+
+**With function pointers (good):**
+- Cleaner, more maintainable code
+- Easy to add new levels - just add to both arrays
+- Table-driven programming pattern
+- Demonstrates advanced C++ feature
+
+#### Member Function Pointer Syntax
+
+**Declaration:**
+```cpp
+void (Harl::*funcPtr)() = &Harl::debug;
+```
+
+**Array of function pointers:**
+```cpp
+void (Harl::*functions[4])() = {&Harl::debug, &Harl::info, &Harl::warning, &Harl::error};
+```
+
+**Calling through pointer:**
+```cpp
+(this->*funcPtr)();       // Using this
+(object.*funcPtr)();      // Using object reference
+(objPtr->*funcPtr)();     // Using object pointer
+```
+
+#### Usage Example
+
+```cpp
+Harl harl;
+harl.complain("DEBUG");    // Prints debug message
+harl.complain("WARNING");  // Prints warning message
+harl.complain("INVALID");  // Does nothing
 ```
 
 #### Key Takeaways
-- Function pointers avoid long if-else chains
-- Member function pointers require `(this->*ptr)()`
+- Function pointers eliminate long if-else chains
+- Member function pointers require special syntax: `(this->*ptr)()`
 - Arrays of function pointers enable table-driven code
-- This pattern is useful for command dispatching
+- Parallel arrays (levels and functions) map strings to functions
+- This pattern is useful for command dispatching and state machines
+- Private member functions encapsulate implementation details
 
 #### Common Mistakes
-1. Incorrect function pointer syntax
-2. Forgetting `this->` when calling
-3. Not matching function signatures exactly
-4. Off-by-one errors in array indexing
-
----
-
-### Exercise 06: Harl filter (Bonus)
-Similar to ex05 but uses switch statement to filter by level and show all higher severity levels.
-
-```cpp
-switch (level) {
-    case DEBUG:
-        this->debug();
-        // Fall through
-    case INFO:
-        this->info();
-        // Fall through
-    case WARNING:
-        this->warning();
-        // Fall through
-    case ERROR:
-        this->error();
-        break;
-    default:
-        std::cout << "Invalid level" << std::endl;
-}
-```
+1. Incorrect function pointer syntax (easy to get wrong!)
+2. Forgetting `this->*` when calling member function pointer
+3. Using `&` when declaring but forgetting it when assigning
+4. Parentheses matter: `(this->*funcPtr)()` not `this->*funcPtr()`
+5. Not matching function signatures exactly
 
 ---
 

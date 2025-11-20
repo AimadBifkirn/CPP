@@ -164,37 +164,51 @@ public:
 
 #### Key Implementations
 
+**My Actual Implementation:**
+
 **Default Constructor**:
 ```cpp
-Fixed::Fixed() : rawBits(0) {
-    std::cout << "Default constructor called" << std::endl;
+Fixed::Fixed ()
+{
+	std::cout << "Default constructor called" << std::endl;
+	this->fp_value = 0;
 }
 ```
 
 **Copy Constructor**:
 ```cpp
-Fixed::Fixed(const Fixed& other) {
-    std::cout << "Copy constructor called" << std::endl;
-    *this = other;  // Reuse assignment operator
-    // OR directly: rawBits = other.rawBits;
+Fixed::Fixed (const Fixed &other)
+{
+	std::cout << "Copy constructor called" << std::endl;
+	*this = other;  // Reuse assignment operator
 }
 ```
+
+Note: I reuse the assignment operator in the copy constructor. This is a common pattern that ensures consistency.
 
 **Assignment Operator**:
 ```cpp
-Fixed& Fixed::operator=(const Fixed& other) {
-    std::cout << "Copy assignment operator called" << std::endl;
-    if (this != &other) {  // Check for self-assignment
-        rawBits = other.rawBits;
-    }
-    return *this;  // Return reference for chaining (a = b = c)
+Fixed& Fixed::operator=(const Fixed &obj)
+{
+	std::cout << "Copy assignment operator called" << std::endl;
+	if (this != &obj)  // Check for self-assignment
+	{
+		this->fp_value = obj.getRawBits();
+	}
+	return (*this);  // Return reference for chaining (a = b = c)
 }
 ```
 
+Key points:
+- Always check for self-assignment (`if (this != &obj)`)
+- Return `*this` to allow chaining
+- Use `getRawBits()` to access private member of `other`
+
 **Destructor**:
 ```cpp
-Fixed::~Fixed() {
-    std::cout << "Destructor called" << std::endl;
+Fixed::~Fixed ()
+{
+	std::cout << "Destructor called" << std::endl;
 }
 ```
 
