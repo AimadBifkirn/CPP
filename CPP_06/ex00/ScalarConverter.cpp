@@ -6,10 +6,12 @@ ScalarConverter::ScalarConverter ()
 
 ScalarConverter::ScalarConverter (const ScalarConverter &other)
 {
+	(void)other;
 }
 
 ScalarConverter &ScalarConverter::operator= (const ScalarConverter &obj)
 {
+	(void)obj;
 	return *this;
 }
 
@@ -31,9 +33,9 @@ static bool is_integer (const std::string &str)
 		i++;
 	}
 
-	for (int i = i; str[i]; i++)
+	for (int idx = i; str[idx]; idx++)
 	{
-		if (!std::isdigit(str[i]))
+		if (!std::isdigit(str[idx]))
 			return false;
 	}
 	return true;
@@ -61,15 +63,15 @@ static bool is_float (const std::string &str)
 	int x = 0;
 	int y = 0;
 
-	for (int i = i; str[i]; i++)
+	for (size_t idx = i; str[idx]; idx++)
 	{
-		if (!y && !std::isdigit(str[i]))
+		if (!y && !std::isdigit(str[idx]))
 			return false;
-		else if (str[i] == '.' && !x)
+		else if (str[idx] == '.' && !x)
 			x = 1;
-		else if (!std::isdigit(str[i]) && i != str.length() - 1)
+		else if (!std::isdigit(str[idx]) && idx != str.length() - 1)
 			return false;
-		else if (i == str.length() - 1 && str[i] != 'f')
+		else if (idx == str.length() - 1 && str[idx] != 'f')
 			return false;
 		y = 1;
 	}
@@ -93,13 +95,13 @@ static bool is_double(const std::string &str)
 	int x = 0;
 	int y = 0;
 
-	for (int i = i; str[i]; i++)
+	for (int idx = i; str[idx]; idx++)
 	{
-		if (!y && !std::isdigit(str[i]))
+		if (!y && !std::isdigit(str[idx]))
 			return false;
-		else if (str[i] == '.' && !x)
+		else if (str[idx] == '.' && !x)
 			x = 1;
-		else if (!std::isdigit(str[i]))
+		else if (!std::isdigit(str[idx]))
 			return false;
 		y = 1;
 	}
@@ -113,7 +115,7 @@ static bool is_special (const std::string &str)
 
 static void printImpossible ()
 {
-	std::cout << "char: impossible\n int: possible\n float: impossible\n double: impossible" << std::endl;
+	std::cout << "char: impossible\nint: impossible\nfloat: impossible\ndouble: impossible" << std::endl;
 }
 
 static void print_char (const std::string &str)
@@ -125,8 +127,8 @@ static void print_char (const std::string &str)
 
 	std::cout << "char: " << (std::isprint(c) ? std::string("'") + c + "'" : "Non displayable") << std::endl;
 	std::cout << "int: " << i << std::endl;
-	std::cout << "float: " << f << "f" << std::endl;
-	std::cout << "double: " << d << std::endl;
+	std::cout << "float: " << f << ".0f" << std::endl;
+	std::cout << "double: " << d << ".0" << std::endl;
 }
 
 static void print_integer(const std::string &str)
@@ -146,8 +148,16 @@ static void print_integer(const std::string &str)
 	else
 		std::cout << "char: " << (std::isprint(c) ? std::string("'") + c + "'" : "Non displayable") << std::endl;
 	std::cout << "int: " << i << std::endl;
-	std::cout << "float: " << f << "f" << std::endl;
-	std::cout << "double: " << d << std::endl;
+
+	if (str.find('.') != std::string::npos)
+		std::cout << "float: " << f << "f" << std::endl;
+	else
+		std::cout << "float: " << f << ".0f" << std::endl;
+
+	if (str.find('.') != std::string::npos)
+		std::cout << "double: " << d << std::endl;
+	else
+		std::cout << "double: " << d << ".0" << std::endl;
 }
 
 static void print_float(const std::string &str)
@@ -168,12 +178,19 @@ static void print_float(const std::string &str)
 		std::cout << "char: " << (std::isprint(c) ? std::string("'") + c + "'" : "Non displayable") << std::endl;
 	
 	if (f < (float)(std::numeric_limits<int>::min()) || f > (float)(std::numeric_limits<int>::max()))
-		std::cout << "int: possible" << std::endl;
+		std::cout << "int: impossible" << std::endl;
 	else
 		std::cout << "int: " << i << std::endl;
 	
-	std::cout << "float: " << f << "f" << std::endl;
-	std::cout << "double: " << d << std::endl;
+	if (str.find('.') != std::string::npos)
+		std::cout << "float: " << f << "f" << std::endl;
+	else
+		std::cout << "float: " << f << ".0f" << std::endl;
+
+	if (str.find('.') != std::string::npos)
+		std::cout << "double: " << d << std::endl;
+	else
+		std::cout << "double: " << d << ".0" << std::endl;
 }
 
 static void print_double(const std::string &str)
@@ -194,16 +211,21 @@ static void print_double(const std::string &str)
 		std::cout << "char: " << (std::isprint(c) ? std::string("'") + c + "'" : "Non displayable") << std::endl;
 	
 	if (d < std::numeric_limits<int>::min() || d > std::numeric_limits<int>::max())
-		std::cout << "int: possible" << std::endl;
+		std::cout << "int: impossible" << std::endl;
 	else
 		std::cout << "int: " << i << std::endl;
 	
 	if (d < std::numeric_limits<float>::min() || d > std::numeric_limits<float>::max())
-		std::cout << "float: possible" << std::endl;
-	else
+		std::cout << "float: impossible" << std::endl;
+	else if (str.find('.') != std::string::npos)
 		std::cout << "float: " << f << "f" << std::endl;
+	else
+		std::cout << "float: " << f << ".0f" << std::endl;
 	
-	std::cout << "double: " << d << std::endl;
+	if (str.find('.') != std::string::npos)
+		std::cout << "double: " << d << std::endl;
+	else
+		std::cout << "double: " << d << ".0" << std::endl;
 }
 
 void ScalarConverter::convert (const std::string &str)
@@ -214,12 +236,12 @@ void ScalarConverter::convert (const std::string &str)
 		return ;
 	}
 
-	if (str.length() <= 1)
-		return (print_char(str));
-	if (is_integer(str))
-		return (print_integer(str));
-	if (is_float(str))
-		return (print_float(str));
 	if (is_double(str))
 		return (print_double(str));
+	if (is_float(str))
+		return (print_float(str));
+	if (is_integer(str))
+		return (print_integer(str));
+	if (is_char(str))
+		return (print_char(str));
 }
