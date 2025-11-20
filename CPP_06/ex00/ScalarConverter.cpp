@@ -75,6 +75,8 @@ static bool is_float (const std::string &str)
 			return false;
 		y = 1;
 	}
+	if (x == 0)
+		return false;
 	return true;
 }
 
@@ -105,6 +107,8 @@ static bool is_double(const std::string &str)
 			return false;
 		y = 1;
 	}
+	if (x == 0)
+		return false;
 	return true;
 }
 
@@ -149,15 +153,8 @@ static void print_integer(const std::string &str)
 		std::cout << "char: " << (std::isprint(c) ? std::string("'") + c + "'" : "Non displayable") << std::endl;
 	std::cout << "int: " << i << std::endl;
 
-	if (str.find('.') != std::string::npos)
-		std::cout << "float: " << f << "f" << std::endl;
-	else
-		std::cout << "float: " << f << ".0f" << std::endl;
-
-	if (str.find('.') != std::string::npos)
-		std::cout << "double: " << d << std::endl;
-	else
-		std::cout << "double: " << d << ".0" << std::endl;
+	std::cout << "float: " << f << ".0f" << std::endl;
+	std::cout << "double: " << d << ".0" << std::endl;
 }
 
 static void print_float(const std::string &str)
@@ -202,8 +199,8 @@ static void print_double(const std::string &str)
 	if (toConvert.fail())
 		return printImpossible();
 	char c = static_cast<char>(d);
-	int i = static_cast<float>(d);
-	float f = static_cast<double>(d);
+	int i = static_cast<int>(d);
+	float f = static_cast<float>(d);
 
 	if (d < 0 || d > 127)
 		std::cout << "char: impossible" << std::endl;
@@ -215,7 +212,7 @@ static void print_double(const std::string &str)
 	else
 		std::cout << "int: " << i << std::endl;
 	
-	if (d < std::numeric_limits<float>::min() || d > std::numeric_limits<float>::max())
+	if (d < -std::numeric_limits<float>::max() - 1 || d > std::numeric_limits<float>::max())
 		std::cout << "float: impossible" << std::endl;
 	else if (d - std::floor(d) != 0.0)
 		std::cout << "float: " << f << "f" << std::endl;
@@ -251,7 +248,7 @@ void ScalarConverter::convert (const std::string &str)
 	if (is_special(str))
 		return (print_special(str));
 	if (is_double(str))
-		return (print_double(str));
+		return (print_double(str));	
 	if (is_float(str))
 		return (print_float(str));
 	if (is_integer(str))
