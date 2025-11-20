@@ -212,41 +212,188 @@ void func() {
 #### Concept
 Create a `Bureaucrat` class with a grade (1-150) that throws exceptions for invalid grades.
 
-#### Implementation
+#### My Implementation
 
-**Bureaucrat.hpp**:
+**Bureaucrat Header** (`Bureaucrat.hpp`):
 ```cpp
-#ifndef BUREAUCRAT_HPP
-#define BUREAUCRAT_HPP
+class Bureaucrat
+{
+	private:
+		const std::string name;  // Const - cannot be changed after construction
+		int   grade;             // 1 (highest) to 150 (lowest)
+	public:
+		Bureaucrat ();
+		Bureaucrat (const Bureaucrat &other);
+		Bureaucrat &operator= (const Bureaucrat &obj);
+		~Bureaucrat ();
+		
+		Bureaucrat (const std::string& name, int grade);
+		std::string getName() const;
+		int getGrade() const;
+		void increment();  // Improve grade (decrease number)
+		void decrement();  // Worsen grade (increase number)
 
-#include <iostream>
-#include <string>
-#include <exception>
+		// Nested exception classes
+		class GradeTooHighException : public std::exception
+		{
+			public:
+				const char *what() const throw();
+		};
 
+		class GradeTooLowException : public std::exception
+		{
+			public:
+				const char *what() const throw();
+		};
+};
+
+std::ostream &operator<< (std::ostream &out ,const Bureaucrat &obj);
+```
+
+**Bureaucrat Implementation** (`Bureaucrat.cpp`):
+
+**Constructor with Validation:**
+```cpp
+Bureaucrat::Bureaucrat (const std::string &name, int grade) : name (name)
+{
+	if (grade < 1)
+		throw GradeTooHighException();
+	else if (grade > 150)
+		throw GradeTooLowException();
+	this->grade = grade;	
+}
+```
+
+**Grade Increment (improves grade = lowers number):**
+```cpp
+void Bureaucrat::increment ()
+{
+	this->grade--;  // Lower number = better grade
+	if (this->grade < 1)
+		throw GradeTooHighException();
+}
+```
+
+**Grade Decrement (worsens grade = raises number):**
+```cpp
+void Bureaucrat::decrement ()
+{
+	this->grade++;  // Higher number = worse grade
+	if (this->grade > 150)
+		throw GradeTooLowException();
+}
+```
+
+**Exception Class Implementations:**
+```cpp
+const char *Bureaucrat::GradeTooHighException::what() const throw()
+{
+	return ("Grade too high!");
+}
+
+const char *Bureaucrat::GradeTooLowException::what() const throw()
+{
+	return ("Grade too low!");
+}
+```
+
+**Insertion Operator Overload:**
+```cpp
+std::ostream &operator<< (std::ostream &out, const Bureaucrat &obj)
+{
+	out << obj.getName() << ", bureaucrat grade " << obj.getGrade() << std::endl;
+	return (out);
+}
+```
+
+#### How I Used Exceptions
+
+**1. Nested Exception Classes:**
+
+The exception classes are nested inside `Bureaucrat`:
+```cpp
 class Bureaucrat {
-private:
-    const std::string name;  // Const - cannot change
-    int grade;               // 1 (highest) to 150 (lowest)
-    
-public:
-    Bureaucrat();
-    Bureaucrat(const std::string& name, int grade);
-    Bureaucrat(const Bureaucrat& other);
-    Bureaucrat& operator=(const Bureaucrat& other);
-    ~Bureaucrat();
-    
-    // Getters
-    const std::string& getName() const;
-    int getGrade() const;
-    
-    // Grade modification
-    void incrementGrade();  // Decrease number (better grade)
-    void decrementGrade();  // Increase number (worse grade)
-    
-    // Nested exception classes
-    class GradeTooHighException : public std::exception {
-    public:
-        virtual const char* what() const throw();
+	class GradeTooHighException : public std::exception { ... };
+	class GradeTooLowException : public std::exception { ... };
+};
+```
+
+This shows they're specific to Bureaucrat. Access them as:
+```cpp
+Bureaucrat::GradeTooHighException
+Bureaucrat::GradeTooLowException
+```
+
+**2. Throwing Exceptions:**
+
+Exceptions are thrown when grade constraints are violated:
+```cpp
+if (grade < 1)
+	throw GradeTooHighException();  // Grade too good
+else if (grade > 150)
+	throw GradeTooLowException();   // Grade too bad
+```
+
+**3. The `what()` Method:**
+
+Override `std::exception::what()` to provide error message:
+```cpp
+const char *what() const throw()  // throw() means "doesn't throw exceptions"
+{
+	return ("Grade too high!");
+}
+```
+
+**4. Usage Example:**
+
+```cpp
+try {
+	Bureaucrat bob("Bob", 0);  // Grade 0 is too high!
+} catch (Bureaucrat::GradeTooHighException& e) {
+	std::cerr << "Error: " << e.what() << std::endl;
+}
+// Output: Error: Grade too high!
+
+try {
+	Bureaucrat alice("Alice", 75);
+	alice.increment();  // 75 -> 74 (better)
+	alice.increment();  // 74 -> 73 (better)
+	std::cout << alice;  // alice, bureaucrat grade 73
+} catch (std::exception& e) {
+	std::cerr << "Error: " << e.what() << std::endl;
+}
+```
+
+**5. Const Correctness:**
+
+The `name` member is const:
+```cpp
+const std::string name;
+```
+
+This means:
+- Must be initialized in constructor initializer list
+- Cannot be changed after construction
+- Makes sense for a bureaucrat - can't change their name!
+
+**6. Why This Design?**
+
+Instead of returning error codes or using assertions:
+```cpp
+// Bad approach:
+bool Bureaucrat::setGrade(int grade) {
+	if (grade < 1 || grade > 150)
+		return false;  // Caller must check return value
+	this->grade = grade;
+	return true;
+}
+```
+
+Exceptions provide:
+- **Immediate error handling**: Can't ignore an exception
+- **Stack unwinding**: Automatic cleanup of local objects
+- **Descriptive errors**: `what()` message explains the problem
+- **Type safety**: Different exception types for different errors
     };
     
     class GradeTooLowException : public std::exception {

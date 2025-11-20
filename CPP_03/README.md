@@ -317,17 +317,122 @@ Create `ScavTrap` class that inherits from `ClapTrap` with:
 - Different attack message
 - New special ability: `guardGate()`
 
-#### Implementation
+#### My Implementation
 
-**Header (ScavTrap.hpp)**:
+**ScavTrap Header** (`ScavTrap.hpp`):
 ```cpp
-#ifndef SCAVTRAP_HPP
-#define SCAVTRAP_HPP
-
 #include "ClapTrap.hpp"
 
-class ScavTrap : public ClapTrap {
-public:
+class ScavTrap : public ClapTrap
+{
+	public:
+		ScavTrap ();
+		ScavTrap (const ScavTrap &other);
+		ScavTrap &operator= (const ScavTrap &obj);
+		~ScavTrap ();
+
+		ScavTrap (std::string Name);
+		void attack(const std::string& target);  // Override
+		void guardGate();                        // New function
+};
+```
+
+**ScavTrap Implementation** (`ScavTrap.cpp`):
+```cpp
+ScavTrap::ScavTrap ()
+{
+	this->HitPoints = 100;
+	this->EnergyPoints = 50;
+	this->AttackDamage = 20;
+	this->Name = "defaut";
+	std::cout << "ScavTrap: Default constructor called" << std::endl;
+}
+
+ScavTrap::ScavTrap (std::string Name)
+{
+	this->Name = Name;
+	this->HitPoints = 100;
+	this->EnergyPoints = 50;
+	this->AttackDamage = 20;
+	std::cout << "ScavTrap: Parameterized constructor called" << std::endl;
+}
+
+ScavTrap::~ScavTrap ()
+{
+	std::cout << "ScavTrap: Destructor called" << std::endl;
+}
+
+void ScavTrap::attack(const std::string& target)
+{
+	if (this->EnergyPoints == 0)
+	{
+		std::cout << "ScavTrap " << this->Name << " is out of energy!" << std::endl;
+		return ;
+	}
+	this->EnergyPoints--;
+	std::cout << "ScavTrap " << this->Name << " attacks " << target 
+	          << ", causing " << this->AttackDamage << " points of damage!" << std::endl;
+}
+
+void ScavTrap::guardGate()
+{
+	std::cout << "ScavTrap " << this->Name << " is now in Gate keeper mode" << std::endl;
+}
+```
+
+#### How Inheritance Works Here
+
+**1. Accessing Protected Members:**
+
+Since `ClapTrap`'s members (`HitPoints`, `EnergyPoints`, `AttackDamage`, `Name`) are likely protected, `ScavTrap` can directly access them:
+```cpp
+this->HitPoints = 100;  // Can access because it's protected in base
+```
+
+**2. Construction Order:**
+
+When you create a `ScavTrap`:
+```cpp
+ScavTrap scav("ST-01");
+```
+
+Output:
+```
+ClapTrap: Default constructor called
+ScavTrap: Parameterized constructor called
+```
+
+The base class constructor runs first, then the derived class constructor.
+
+**3. Destruction Order (reverse of construction):**
+
+When `scav` goes out of scope:
+```
+ScavTrap: Destructor called
+ClapTrap: Destructor called
+```
+
+**4. Function Overriding:**
+
+`ScavTrap` overrides the `attack()` method:
+```cpp
+void ScavTrap::attack(const std::string& target)
+{
+	// Different implementation than ClapTrap::attack()
+	std::cout << "ScavTrap " << this->Name << " attacks " << target 
+	          << ", causing " << this->AttackDamage << " points of damage!" << std::endl;
+}
+```
+
+**5. Adding New Functionality:**
+
+`guardGate()` is a new method that doesn't exist in `ClapTrap`:
+```cpp
+void ScavTrap::guardGate()
+{
+	std::cout << "ScavTrap " << this->Name << " is now in Gate keeper mode" << std::endl;
+}
+```
     ScavTrap();
     ScavTrap(std::string name);
     ScavTrap(const ScavTrap& other);
