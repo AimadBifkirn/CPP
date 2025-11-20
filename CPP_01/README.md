@@ -749,83 +749,184 @@ Create a program that replaces all occurrences of s1 with s2 in a file:
 
 Creates `filename.replace` with all s1 occurrences replaced by s2.
 
-#### Implementation
-```cpp
-#include <iostream>
-#include <fstream>
-#include <string>
+#### My Implementation
 
-int main(int argc, char** argv) {
-    if (argc != 4) {
-        std::cout << "Usage: ./replace filename s1 s2" << std::endl;
-        return 1;
-    }
-    
-    std::string filename = argv[1];
-    std::string s1 = argv[2];
-    std::string s2 = argv[3];
-    
-    // Open input file
-    std::ifstream infile(filename.c_str());
-    if (!infile.is_open()) {
-        std::cout << "Error: cannot open " << filename << std::endl;
-        return 1;
-    }
-    
-    // Open output file
-    std::ofstream outfile((filename + ".replace").c_str());
-    if (!outfile.is_open()) {
-        std::cout << "Error: cannot create output file" << std::endl;
-        return 1;
-    }
-    
-    // Read and replace
-    std::string line;
-    while (std::getline(infile, line)) {
-        size_t pos = 0;
-        while ((pos = line.find(s1, pos)) != std::string::npos) {
-            line.erase(pos, s1.length());
-            line.insert(pos, s2);
-            pos += s2.length();
-        }
-        outfile << line << std::endl;
-    }
-    
-    infile.close();
-    outfile.close();
-    
-    return 0;
+Here's my complete `main.cpp`:
+
+```cpp
+#include "main.hpp"
+
+int main(int argc, char **argv)
+{
+	if (argc != 4)
+	{
+		std::cerr << "Arguments number must be 3!!" << std::endl;
+		return (1);
+	}
+	if ((std::string(argv[2])).empty() || (std::string(argv[3])).empty())
+	{
+		std::cerr << "Empty args are not exepted !" << std::endl;
+		return (1);
+	}
+	std::ifstream inputFile(argv[1]);
+	if (!inputFile)
+	{
+		std::cerr << "Failed to open the file : " << argv[1] << std::endl;
+		return (1);
+	}
+	std::ofstream outputFile(((std::string)argv[1] + ".replace").c_str());
+	if (!outputFile)
+	{
+		inputFile.close();
+		std::cerr << "Failed to create the output file(.replace) !!" << std::endl;
+		return (1);
+	}
+	std::string	line;
+	while (std::getline(inputFile,line))
+	{
+		size_t	pos = 0;
+		while ((pos = line.find(argv[2], pos)) != std::string::npos)
+		{
+			line.erase(pos, std::string(argv[2]).length());
+			line.insert(pos, std::string(argv[3]));
+			pos += ((std::string)argv[3]).length();
+		}
+		outputFile << line;
+		if (!inputFile.eof())
+			outputFile << std::endl;
+	}
+	inputFile.close();
+	outputFile.close();
+	return (0);
 }
 ```
 
-#### Key Functions
-- `std::ifstream`: Input file stream
-- `std::ofstream`: Output file stream
-- `std::getline()`: Read line by line
-- `std::string::find()`: Find substring
-- `std::string::erase()`: Remove characters
-- `std::string::insert()`: Insert string
+#### How I Solved It
 
-#### Edge Cases to Handle
-1. Empty s1 (would cause infinite loop)
-2. File doesn't exist
-3. Cannot create output file
-4. s1 not found in file
-5. Overlapping replacements
+**1. Argument Validation:**
+
+First, I check if we have exactly 4 arguments (program name + 3 parameters):
+```cpp
+if (argc != 4)
+{
+	std::cerr << "Arguments number must be 3!!" << std::endl;
+	return (1);
+}
+```
+
+Then verify that s1 and s2 are not empty (empty s1 would cause infinite loop):
+```cpp
+if ((std::string(argv[2])).empty() || (std::string(argv[3])).empty())
+{
+	std::cerr << "Empty args are not exepted !" << std::endl;
+	return (1);
+}
+```
+
+**2. Opening Files:**
+
+Open input file for reading:
+```cpp
+std::ifstream inputFile(argv[1]);
+if (!inputFile)
+{
+	std::cerr << "Failed to open the file : " << argv[1] << std::endl;
+	return (1);
+}
+```
+
+Create output file (filename + ".replace"):
+```cpp
+std::ofstream outputFile(((std::string)argv[1] + ".replace").c_str());
+if (!outputFile)
+{
+	inputFile.close();
+	std::cerr << "Failed to create the output file(.replace) !!" << std::endl;
+	return (1);
+}
+```
+
+Note: `.c_str()` is needed for C++98 compatibility.
+
+**3. Line-by-Line Processing:**
+
+Read each line from the input file:
+```cpp
+while (std::getline(inputFile, line))
+```
+
+**4. String Replacement Logic:**
+
+For each line, find and replace all occurrences of s1:
+```cpp
+size_t	pos = 0;
+while ((pos = line.find(argv[2], pos)) != std::string::npos)
+{
+	line.erase(pos, std::string(argv[2]).length());  // Remove s1
+	line.insert(pos, std::string(argv[3]));          // Insert s2
+	pos += ((std::string)argv[3]).length();          // Move past replacement
+}
+```
+
+**Key points:**
+- `find(s1, pos)` searches for s1 starting from position `pos`
+- Returns `std::string::npos` if not found
+- `erase(pos, length)` removes characters
+- `insert(pos, s2)` inserts s2 at position
+- Update `pos` to skip past the newly inserted string (prevents infinite loop if s2 contains s1)
+
+**5. Writing Output:**
+
+Write the modified line to output file:
+```cpp
+outputFile << line;
+if (!inputFile.eof())
+	outputFile << std::endl;
+```
+
+I check `eof()` to avoid adding an extra newline at the end of the file.
+
+**6. Cleanup:**
+
+Close both files:
+```cpp
+inputFile.close();
+outputFile.close();
+```
+
+#### Example Usage
+
+```bash
+$ echo "Hello world, hello universe" > test.txt
+$ ./replace test.txt hello hi
+$ cat test.txt.replace
+Hi world, hi universe
+```
+
+#### Key Functions Used
+- `std::ifstream`: Input file stream (reading)
+- `std::ofstream`: Output file stream (writing)
+- `std::getline()`: Read line by line
+- `std::string::find()`: Find substring, returns position or `npos`
+- `std::string::erase()`: Remove characters at position
+- `std::string::insert()`: Insert string at position
+- `std::string::npos`: Constant representing "not found"
+
+#### Edge Cases Handled
+1. ✅ Wrong number of arguments
+2. ✅ Empty s1 or s2 (prevents infinite loop)
+3. ✅ File doesn't exist (error message)
+4. ✅ Cannot create output file (error message)
+5. ✅ Multiple occurrences on same line
+6. ✅ No extra newline at end of file
 
 #### Key Takeaways
-- File streams work like `cin`/`cout`
-- Always check if file opened successfully
-- Close files when done
-- String find() returns `std::string::npos` if not found
-- Be careful with string position updates after replacement
-
-#### Common Mistakes
-1. Not checking if file opened
-2. Infinite loop when s1 is empty or s2 contains s1
-3. Not updating position after replacement
-4. Forgetting to close files
-5. Using `c_str()` for C++98 compatibility
+- File streams work like `cin`/`cout` but with files
+- Always check if file opened successfully with `if (!file)`
+- Close files when done (good practice, though destructors do it automatically)
+- `find()` returns `std::string::npos` when substring not found
+- Update position after replacement to avoid infinite loops
+- Use `std::cerr` for error messages instead of `std::cout`
 
 ---
 
@@ -835,100 +936,189 @@ int main(int argc, char** argv) {
 #### What It Teaches
 - Member function pointers
 - Array of function pointers
-- Switch statement alternative
+- Avoiding long if-else chains
 - Cleaner code organization
+- Table-driven programming
 
 #### Concept
-Create a class `Harl` that complains at different levels without using long if-else chains.
+Create a class `Harl` that complains at different levels (DEBUG, INFO, WARNING, ERROR) without using long if-else chains. Use function pointers for elegant dispatch.
 
-#### Implementation
+#### My Implementation
+
+**Harl Class** (`Harl.hpp`):
 ```cpp
-class Harl {
-private:
-    void debug();
-    void info();
-    void warning();
-    void error();
-    
-public:
-    void complain(std::string level);
+class Harl
+{
+	private:
+		void debug( void );
+		void info( void );
+		void warning( void );
+		void error( void );
+	public:
+		void complain( std::string level );
 };
+```
 
-void Harl::complain(std::string level) {
-    // Array of function pointers
-    void (Harl::*functions[])() = {
-        &Harl::debug,
-        &Harl::warning,
-        &Harl::info,
-        &Harl::error
-    };
-    
-    std::string levels[] = {
-        "DEBUG",
-        "INFO",
-        "WARNING",
-        "ERROR"
-    };
-    
-    // Find and call the appropriate function
-    for (int i = 0; i < 4; i++) {
-        if (levels[i] == level) {
-            (this->*functions[i])();
-            return;
-        }
-    }
+**Harl Implementation** (`Harl.cpp`):
+```cpp
+#include "Harl.hpp"
+
+void	Harl::debug(void)
+{
+	std::cout << \
+	"[ DEBUG ]\nI love having extra bacon for my 7XL-double-cheese-triple-pickle-special-ketchup burger. I really do!" \
+	<< std::endl;
+}
+
+void	Harl::info(void)
+{
+	std::cout << \
+	"[ INFO ]\nI cannot believe adding extra bacon costs more money. You didn't put enough bacon in my burger! If you did, I wouldn't be asking for more!" \
+	<< std::endl;
+}
+
+void	Harl::warning(void)
+{
+	std::cout << \
+	"[ WARNING ]\nI think I deserve to have some extra bacon for free. I've been coming for years whereas you started working here since last month." \
+	<< std::endl;
+}
+
+void	Harl::error(void)
+{
+	std::cout << \
+	"[ ERROR ]\nThis is unacceptable! I want to speak to the manager now." \
+	<< std::endl;
+}
+
+void	Harl::complain(std::string level)
+{
+	std::string	levels[] = {"DEBUG", "INFO", "WARNING", "ERROR"};
+	void(Harl::*functions[])() = {&Harl::debug, &Harl::info, &Harl::warning, &Harl::error};
+	for (int i = 0; i < 4; i++)
+	{
+		if (levels[i] == level)
+		{
+			(this->*functions[i])();
+			return ;
+		}
+	}
 }
 ```
 
-#### Member Function Pointer Syntax
+#### How I Solved It
+
+**1. Private Complaint Functions:**
+
+Each severity level has its own private method:
 ```cpp
-// Declaration
-void (Harl::*funcPtr)();
+void debug(void);
+void info(void);
+void warning(void);
+void error(void);
+```
 
-// Assignment
-funcPtr = &Harl::debug;
+These are private because they should only be called through `complain()`.
 
-// Calling
-(this->*funcPtr)();
-// or
-(object.*funcPtr)();
+**2. Function Pointer Array:**
+
+The magic happens in the `complain()` method. I create two parallel arrays:
+```cpp
+std::string	levels[] = {"DEBUG", "INFO", "WARNING", "ERROR"};
+void(Harl::*functions[])() = {&Harl::debug, &Harl::info, &Harl::warning, &Harl::error};
+```
+
+**Breaking down the syntax:**
+- `void(Harl::*functions[])()` - Array of pointers to member functions
+- `void` - Return type
+- `Harl::*` - Pointer to member of Harl class
+- `functions[]` - Array name
+- `()` - Function takes no parameters
+- `&Harl::debug` - Address of the member function
+
+**3. Finding and Calling the Function:**
+
+Loop through levels to find a match:
+```cpp
+for (int i = 0; i < 4; i++)
+{
+	if (levels[i] == level)
+	{
+		(this->*functions[i])();  // Call the function
+		return ;
+	}
+}
+```
+
+**Calling syntax:** `(this->*functions[i])()`
+- `this->*` - Dereference member function pointer on this object
+- `functions[i]` - The function pointer
+- `()` - Call the function
+
+**4. Why This Approach?**
+
+**Without function pointers (bad):**
+```cpp
+void complain(std::string level) {
+	if (level == "DEBUG")
+		debug();
+	else if (level == "INFO")
+		info();
+	else if (level == "WARNING")
+		warning();
+	else if (level == "ERROR")
+		error();
+}
+```
+
+**With function pointers (good):**
+- Cleaner, more maintainable code
+- Easy to add new levels - just add to both arrays
+- Table-driven programming pattern
+- Demonstrates advanced C++ feature
+
+#### Member Function Pointer Syntax
+
+**Declaration:**
+```cpp
+void (Harl::*funcPtr)() = &Harl::debug;
+```
+
+**Array of function pointers:**
+```cpp
+void (Harl::*functions[4])() = {&Harl::debug, &Harl::info, &Harl::warning, &Harl::error};
+```
+
+**Calling through pointer:**
+```cpp
+(this->*funcPtr)();       // Using this
+(object.*funcPtr)();      // Using object reference
+(objPtr->*funcPtr)();     // Using object pointer
+```
+
+#### Usage Example
+
+```cpp
+Harl harl;
+harl.complain("DEBUG");    // Prints debug message
+harl.complain("WARNING");  // Prints warning message
+harl.complain("INVALID");  // Does nothing
 ```
 
 #### Key Takeaways
-- Function pointers avoid long if-else chains
-- Member function pointers require `(this->*ptr)()`
+- Function pointers eliminate long if-else chains
+- Member function pointers require special syntax: `(this->*ptr)()`
 - Arrays of function pointers enable table-driven code
-- This pattern is useful for command dispatching
+- Parallel arrays (levels and functions) map strings to functions
+- This pattern is useful for command dispatching and state machines
+- Private member functions encapsulate implementation details
 
 #### Common Mistakes
-1. Incorrect function pointer syntax
-2. Forgetting `this->` when calling
-3. Not matching function signatures exactly
-4. Off-by-one errors in array indexing
-
----
-
-### Exercise 06: Harl filter (Bonus)
-Similar to ex05 but uses switch statement to filter by level and show all higher severity levels.
-
-```cpp
-switch (level) {
-    case DEBUG:
-        this->debug();
-        // Fall through
-    case INFO:
-        this->info();
-        // Fall through
-    case WARNING:
-        this->warning();
-        // Fall through
-    case ERROR:
-        this->error();
-        break;
-    default:
-        std::cout << "Invalid level" << std::endl;
-}
-```
+1. Incorrect function pointer syntax (easy to get wrong!)
+2. Forgetting `this->*` when calling member function pointer
+3. Using `&` when declaring but forgetting it when assigning
+4. Parentheses matter: `(this->*funcPtr)()` not `this->*funcPtr()`
+5. Not matching function signatures exactly
 
 ---
 
