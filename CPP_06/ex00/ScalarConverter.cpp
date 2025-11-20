@@ -182,12 +182,12 @@ static void print_float(const std::string &str)
 	else
 		std::cout << "int: " << i << std::endl;
 	
-	if (str.find('.') != std::string::npos)
+	if (f - std::floor(f) != 0.0f)
 		std::cout << "float: " << f << "f" << std::endl;
 	else
 		std::cout << "float: " << f << ".0f" << std::endl;
 
-	if (str.find('.') != std::string::npos)
+	if (f - std::floor(f) != 0.0f)
 		std::cout << "double: " << d << std::endl;
 	else
 		std::cout << "double: " << d << ".0" << std::endl;
@@ -217,15 +217,27 @@ static void print_double(const std::string &str)
 	
 	if (d < std::numeric_limits<float>::min() || d > std::numeric_limits<float>::max())
 		std::cout << "float: impossible" << std::endl;
-	else if (str.find('.') != std::string::npos)
+	else if (d - std::floor(d) != 0.0)
 		std::cout << "float: " << f << "f" << std::endl;
 	else
 		std::cout << "float: " << f << ".0f" << std::endl;
 	
-	if (str.find('.') != std::string::npos)
+	if (d - std::floor(d) != 0.0)
 		std::cout << "double: " << d << std::endl;
 	else
 		std::cout << "double: " << d << ".0" << std::endl;
+}
+
+static void print_special (const std::string &str)
+{
+	std::cout << "char: impossible\nint: impossible" << std::endl;
+
+	if (str == "+inf" || str == "+inff")
+		std::cout << "float: +inff\ndouble: +inf" << std::endl;
+	else if (str == "-inf" || str == "-inff")
+		std::cout << "float: -inff\ndouble: -inf" << std::endl;
+	else if (str == "nan" || str == "nanf")
+		std::cout << "float: nanf\ndouble: nan" << std::endl;
 }
 
 void ScalarConverter::convert (const std::string &str)
@@ -236,6 +248,8 @@ void ScalarConverter::convert (const std::string &str)
 		return ;
 	}
 
+	if (is_special(str))
+		return (print_special(str));
 	if (is_double(str))
 		return (print_double(str));
 	if (is_float(str))
