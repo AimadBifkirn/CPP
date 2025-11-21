@@ -75,8 +75,8 @@ static bool is_float (const std::string &str)
 			return false;
 		y = 1;
 	}
-	if (x == 0)
-		return false;
+	// if (x == 0)
+	// 	return false;
 	return true;
 }
 
@@ -107,8 +107,8 @@ static bool is_double(const std::string &str)
 			return false;
 		y = 1;
 	}
-	if (x == 0)
-		return false;
+	// if (x == 0)
+	// 	return false;
 	return true;
 }
 
