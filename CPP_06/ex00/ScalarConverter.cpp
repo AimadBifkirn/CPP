@@ -218,7 +218,7 @@ static void print_double(const std::string &str)
 		std::cout << "float: " << f << "f" << std::endl;
 	else
 		std::cout << "float: " << f << ".0f" << std::endl;
-	
+
 	if (d - std::floor(d) != 0.0)
 		std::cout << "double: " << d << std::endl;
 	else
@@ -239,8 +239,6 @@ static void print_special (const std::string &str)
 
 void ScalarConverter::convert (std::string str)
 {
-	if (str[str.length() - 1] == 'f') // to cheeck later
-		str[str.length() - 1] = '\0';
 	if (!is_double(str) && !is_special(str))
 	{
 		printImpossible();
@@ -249,6 +247,10 @@ void ScalarConverter::convert (std::string str)
 
 	if (is_special(str))
 		return (print_special(str));
+
+	if (str[str.length() - 1] == 'f') // to cheeck later
+		str[str.length() - 1] = '\0';
+
 	if (is_double(str))
 		return (print_double(str));	
 }
