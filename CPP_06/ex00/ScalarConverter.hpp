@@ -14,5 +14,5 @@ class ScalarConverter
 		ScalarConverter &operator= (const ScalarConverter &obj);
 		~ScalarConverter ();
 
-		static void convert (const std::string &str);
+		static void convert (std::string str);
 };
