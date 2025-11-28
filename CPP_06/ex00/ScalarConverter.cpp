@@ -19,67 +19,6 @@ ScalarConverter::~ScalarConverter ()
 {
 }
 
-// static bool is_integer (const std::string &str)
-// {
-// 	if (str.empty())
-// 		return false;
-
-// 	int i = 0;
-
-// 	if (str[0] == '+' || str[0] == '-')
-// 	{
-// 		if (str.length() == 1)
-// 			return false;
-// 		i++;
-// 	}
-
-// 	for (int idx = i; str[idx]; idx++)
-// 	{
-// 		if (!std::isdigit(str[idx]))
-// 			return false;
-// 	}
-// 	return true;
-// }
-
-// static bool is_char (const std::string &str)
-// {
-// 	return (str.length() == 1 && str.empty() && !std::isdigit(str[0]));
-// }
-
-// static bool is_float (const std::string &str)
-// {
-// 	if (str.empty())
-// 		return false;
-	
-// 	int i = 0;
-
-// 	if (str[0] == '+' || str[0] == '-')
-// 	{
-// 		if (str.length() == 1)
-// 			return false;
-// 		i++;
-// 	}
-
-// 	int x = 0;
-// 	int y = 0;
-
-// 	for (size_t idx = i; str[idx]; idx++)
-// 	{
-// 		if (!y && !std::isdigit(str[idx]))
-// 			return false;
-// 		else if (str[idx] == '.' && !x)
-// 			x = 1;
-// 		else if (!std::isdigit(str[idx]) && idx != str.length() - 1)
-// 			return false;
-// 		else if (idx == str.length() - 1 && str[idx] != 'f')
-// 			return false;
-// 		y = 1;
-// 	}
-// 	// if (x == 0)
-// 	// 	return false;
-// 	return true;
-// }
-
 static bool is_double(const std::string &str)
 {
 	if (str.empty())
@@ -96,8 +35,11 @@ static bool is_double(const std::string &str)
 
 	int x = 0;
 	int y = 0;
+	int stop = str.length();
+	if (str.length() != 1 && str[str.length() - 1] == 'f')
+		stop = str.length() - 1;
 
-	for (int idx = i; str[idx]; idx++)
+	for (int idx = i; idx < stop; idx++)
 	{
 		if (!y && !std::isdigit(str[idx]))
 			return false;
@@ -107,8 +49,9 @@ static bool is_double(const std::string &str)
 			return false;
 		y = 1;
 	}
-	// if (x == 0)
-	// 	return false;
+	if (str[stop - 1] == '.')
+		return false;
+
 	return true;
 }
 
@@ -122,74 +65,6 @@ static void printImpossible ()
 	std::cout << "char: impossible\nint: impossible\nfloat: impossible\ndouble: impossible" << std::endl;
 }
 
-// static void print_char (const std::string &str)
-// {
-// 	char c = str[0];
-// 	int i = static_cast<int>(c);
-// 	float f = static_cast<float>(c);
-// 	double d = static_cast<double>(c);
-
-// 	std::cout << "char: " << (std::isprint(c) ? std::string("'") + c + "'" : "Non displayable") << std::endl;
-// 	std::cout << "int: " << i << std::endl;
-// 	std::cout << "float: " << f << ".0f" << std::endl;
-// 	std::cout << "double: " << d << ".0" << std::endl;
-// }
-
-// static void print_integer(const std::string &str)
-// {
-// 	std::istringstream toConvert(str);
-// 	int i;
-
-// 	toConvert >> i;
-// 	if (toConvert.fail())
-// 		return printImpossible();
-// 	char c = static_cast<char>(i);
-// 	float f = static_cast<float>(i);
-// 	double d = static_cast<double>(i);
-
-// 	if (i < std::numeric_limits<char>::min() || i > std::numeric_limits<char>::max())
-// 		std::cout << "char: impossible" << std::endl;
-// 	else
-// 		std::cout << "char: " << (std::isprint(c) ? std::string("'") + c + "'" : "Non displayable") << std::endl;
-// 	std::cout << "int: " << i << std::endl;
-
-// 	std::cout << "float: " << f << ".0f" << std::endl;
-// 	std::cout << "double: " << d << ".0" << std::endl;
-// }
-
-// static void print_float(const std::string &str)
-// {
-// 	std::istringstream toConvert(str);
-// 	float f;
-
-// 	toConvert >> f;
-// 	if (toConvert.fail())
-// 		return printImpossible();
-// 	char c = static_cast<char>(f);
-// 	int i = static_cast<float>(f);
-// 	double d = static_cast<double>(f);
-
-// 	if (f < std::numeric_limits<char>::min() || f > std::numeric_limits<char>::max())
-// 		std::cout << "char: impossible" << std::endl;
-// 	else
-// 		std::cout << "char: " << (std::isprint(c) ? std::string("'") + c + "'" : "Non displayable") << std::endl;
-	
-// 	if (f < (float)(std::numeric_limits<int>::min()) || f > (float)(std::numeric_limits<int>::max()))
-// 		std::cout << "int: impossible" << std::endl;
-// 	else
-// 		std::cout << "int: " << i << std::endl;
-	
-// 	if (f - std::floor(f) != 0.0f)
-// 		std::cout << "float: " << f << "f" << std::endl;
-// 	else
-// 		std::cout << "float: " << f << ".0f" << std::endl;
-
-// 	if (f - std::floor(f) != 0.0f)
-// 		std::cout << "double: " << d << std::endl;
-// 	else
-// 		std::cout << "double: " << d << ".0" << std::endl;
-// }
-
 static void print_double(const std::string &str)
 {
 	std::istringstream toConvert(str);
@@ -202,7 +77,7 @@ static void print_double(const std::string &str)
 	int i = static_cast<int>(d);
 	float f = static_cast<float>(d);
 
-	if (d < std::numeric_limits<char>::min() || d > std::numeric_limits<char>::max())
+	if (d < 0 || d > std::numeric_limits<char>::max())
 		std::cout << "char: impossible" << std::endl;
 	else
 		std::cout << "char: " << (std::isprint(c) ? std::string("'") + c + "'" : "Non displayable") << std::endl;
@@ -247,9 +122,6 @@ void ScalarConverter::convert (std::string str)
 
 	if (is_special(str))
 		return (print_special(str));
-
-	if (str[str.length() - 1] == 'f') // to cheeck later
-		str[str.length() - 1] = '\0';
 
 	if (is_double(str))
 		return (print_double(str));	
