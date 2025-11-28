@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <stdint.h>
+#include "Data.hpp"
 
 class Serializer
 {
@@ -12,6 +13,6 @@ class Serializer
 		Serializer &operator= (const Serializer &obj);
 		~Serializer ();
 
-		static uintptr_t serialize(void* ptr);
-		static void *deserialize(uintptr_t raw);
+		static uintptr_t serialize(Data* ptr);
+		static Data* deserialize(uintptr_t raw);
 };

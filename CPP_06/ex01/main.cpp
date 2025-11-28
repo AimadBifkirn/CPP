@@ -4,15 +4,15 @@ int main()
 {
 
 	Serializer s;
-    int* p = new int(65);
+    Data d = {1337, 'A'};
 
-	uintptr_t u =  s.serialize(p);
-	std::cout << p << std::endl;
-	std::cout << *p << std::endl;
+	uintptr_t u =  s.serialize(&d);
+	std::cout << &d << std::endl;
+	std::cout << "int i = " << d.i << ", char c = " << d.c << std::endl;
 	std::cout << u << std::endl;
 	
-	int *res = (int *)s.deserialize(u);
+	Data *res = s.deserialize(u);
 	std::cout << res << std::endl;
-	std::cout << *res << std::endl;
+	std::cout << "int i = " << res->i << ", char c = " << res->c << std::endl;
     return 0;
 }
