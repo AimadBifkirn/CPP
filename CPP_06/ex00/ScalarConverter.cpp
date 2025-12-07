@@ -124,5 +124,5 @@ void ScalarConverter::convert (std::string str)
 		return (print_special(str));
 
 	if (is_double(str))
-		return (print_double(str));	
+		return (print_double(str));
 }
