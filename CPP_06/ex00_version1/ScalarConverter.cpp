@@ -68,7 +68,7 @@ static bool isFloat(const std::string &s)
             return false;
     }
 
-    return (dot == 1 && hasDigit);
+    return (dot <= 1 && hasDigit);
 }
 
 static bool isDouble(const std::string &s)
@@ -124,24 +124,32 @@ static void printImpossible ()
 	std::cout << "char: impossible\nint: impossible\nfloat: impossible\ndouble: impossible" << std::endl;
 }
 
-static void print_double(const std::string &str, int type)
+static void print_all(const std::string &str, int type)
 {
 	std::istringstream toConvert(str);
 	double d;
 
-	toConvert >> d;
-	if (toConvert.fail())
-		return printImpossible();
-	int i = static_cast<int>(d);
-	float f = static_cast<float>(d);
-
-	if (type != 'c')
-		std::cout << "char: impossible" << std::endl;
+	if (type == 'c')
+	{
+		char c = str[0];
+		d = static_cast<double>(c);
+	}
 	else
 	{
-		char c = static_cast<char>(d);
-		std::cout << "char: " << (std::isprint(c) ? std::string("'") + c + "'" : "Non displayable") << std::endl;
+		toConvert >> d;
+		if (toConvert.fail())
+		{
+			return printImpossible();
+		}
 	}
+	char c = static_cast<char>(d);
+	int i = static_cast<int>(d);
+	float f = static_cast<float>(d);
+	(void)type;
+	if (d < 0 || d > std::numeric_limits<char>::max())
+		std::cout << "char: impossible" << std::endl;
+	else
+		std::cout << "char: " << (std::isprint(c) ? std::string("'") + c + "'" : "Non displayable") << std::endl;
 	
 	if (d < std::numeric_limits<int>::min() || d > std::numeric_limits<int>::max())
 		std::cout << "int: impossible" << std::endl;
@@ -185,5 +193,5 @@ void ScalarConverter::convert (std::string str)
 	if (type == 's')
 		return (print_special(str));
 
-	return (print_double(str, type));
+	return (print_all(str, type));
 }
