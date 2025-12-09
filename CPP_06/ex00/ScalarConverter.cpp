@@ -62,12 +62,9 @@ static bool isFloat(const std::string &s)
 				return (false);
             dot = 1;
         }
-        else if (std::isdigit(s[i]))
-            ;
-        else
+        else if (!std::isdigit(s[i]))
             return (false);
     }
-
     return (true);
 }
 
@@ -89,12 +86,9 @@ static bool isDouble(const std::string &s)
 				return (false);
             dot = 1;
         }
-        else if (std::isdigit(s[i]))
-            ;
-        else
+        else if (!std::isdigit(s[i]))
             return false;
     }
-
     return true;
 }
 
