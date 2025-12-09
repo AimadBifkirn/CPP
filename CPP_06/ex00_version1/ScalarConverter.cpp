@@ -50,25 +50,25 @@ static bool isFloat(const std::string &s)
         return false;
 
     int i = 0, dot = 0;
+
     if (s[i] == '+' || s[i] == '-')
         i++;
 
-    bool hasDigit = false;
-
-    for (; i < (int)s.length() - 1; i++) // ignore final 'f'
+    for (; i < (int)s.length() - 1; i++)
     {
         if (s[i] == '.')
         {
-            if (dot) return false;    // only one dot allowed
+            if (dot || i == 0 || s[i + 1] == 'f')
+				return (false);
             dot = 1;
         }
         else if (std::isdigit(s[i]))
-            hasDigit = true;
+            ;
         else
-            return false;
+            return (false);
     }
 
-    return (dot <= 1 && hasDigit);
+    return (true);
 }
 
 static bool isDouble(const std::string &s)
@@ -77,25 +77,25 @@ static bool isDouble(const std::string &s)
         return false;
 
     int i = 0, dot = 0;
+
     if (s[i] == '+' || s[i] == '-')
         i++;
-
-    bool hasDigit = false;
 
     for (; i < (int)s.length(); i++)
     {
         if (s[i] == '.')
         {
-            if (dot) return false;
+            if (dot || i == 0 || s[i + 1] == '\0')
+				return (false);
             dot = 1;
         }
         else if (std::isdigit(s[i]))
-            hasDigit = true;
+            ;
         else
             return false;
     }
 
-    return hasDigit;
+    return true;
 }
 
 static bool is_special (const std::string &str)
