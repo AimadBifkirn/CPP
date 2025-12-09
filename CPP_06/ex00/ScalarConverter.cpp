@@ -19,40 +19,83 @@ ScalarConverter::~ScalarConverter ()
 {
 }
 
-static bool is_double(const std::string &str)
+
+static bool isChar(const std::string &s)
 {
-	if (str.empty())
-		return false;
-	
-	int i = 0;
+    return (s.length() == 1 && !std::isdigit(s[0]));
+}
 
-	if (str[0] == '+' || str[0] == '-')
-	{
-		if (str.length() == 1)
-			return false;
-		i++;
-	}
+static bool isInt(const std::string &s)
+{
+    if (s.empty())
+        return false;
 
-	int x = 0;
-	int y = 0;
-	int stop = str.length();
-	if (str.length() != 1 && str[str.length() - 1] == 'f')
-		stop = str.length() - 1;
+    int i = 0;
+    if (s[i] == '+' || s[i] == '-')
+        i++;
 
-	for (int idx = i; idx < stop; idx++)
-	{
-		if (!y && !std::isdigit(str[idx]))
-			return false;
-		else if (str[idx] == '.' && !x)
-			x = 1;
-		else if (!std::isdigit(str[idx]))
-			return false;
-		y = 1;
-	}
-	if (str[stop - 1] == '.')
-		return false;
+    if (i == (int)s.length())
+        return false;
 
-	return true;
+    for (; i < (int)s.length(); i++)
+        if (!std::isdigit(s[i]))
+            return false;
+
+    return true;
+}
+
+static bool isFloat(const std::string &s)
+{
+    if (s.empty() || s[s.length() - 1] != 'f')
+        return false;
+
+    int i = 0, dot = 0;
+
+    if (s[i] == '+' || s[i] == '-')
+        i++;
+
+    for (; i < (int)s.length() - 1; i++)
+    {
+        if (s[i] == '.')
+        {
+            if (dot || i == 0 || s[i + 1] == 'f')
+				return (false);
+            dot = 1;
+        }
+        else if (std::isdigit(s[i]))
+            ;
+        else
+            return (false);
+    }
+
+    return (true);
+}
+
+static bool isDouble(const std::string &s)
+{
+    if (s.empty() || s[s.length() - 1] == 'f')
+        return false;
+
+    int i = 0, dot = 0;
+
+    if (s[i] == '+' || s[i] == '-')
+        i++;
+
+    for (; i < (int)s.length(); i++)
+    {
+        if (s[i] == '.')
+        {
+            if (dot || i == 0 || s[i + 1] == '\0')
+				return (false);
+            dot = 1;
+        }
+        else if (std::isdigit(s[i]))
+            ;
+        else
+            return false;
+    }
+
+    return true;
 }
 
 static bool is_special (const std::string &str)
@@ -60,23 +103,49 @@ static bool is_special (const std::string &str)
 	return (str == "-inff" || str == "+inff" || str == "nanf" || str == "-inf" || str == "+inf" || str == "nan");
 }
 
+static int get_type (const std::string &str)
+{
+	if (isChar(str))
+		return 'c';
+	else if (isInt(str))
+		return 'i';
+	else if (isFloat(str))
+		return 'f';
+	else if (isDouble(str))
+		return 'd';
+	else if (is_special(str))
+		return 's';
+	else
+		return -1;
+}
+
 static void printImpossible ()
 {
 	std::cout << "char: impossible\nint: impossible\nfloat: impossible\ndouble: impossible" << std::endl;
 }
 
-static void print_double(const std::string &str)
+static void print_all(const std::string &str, int type)
 {
 	std::istringstream toConvert(str);
 	double d;
 
-	toConvert >> d;
-	if (toConvert.fail())
-		return printImpossible();
+	if (type == 'c')
+	{
+		char c = str[0];
+		d = static_cast<double>(c);
+	}
+	else
+	{
+		toConvert >> d;
+		if (toConvert.fail())
+		{
+			return printImpossible();
+		}
+	}
 	char c = static_cast<char>(d);
 	int i = static_cast<int>(d);
 	float f = static_cast<float>(d);
-
+	(void)type;
 	if (d < 0 || d > std::numeric_limits<char>::max())
 		std::cout << "char: impossible" << std::endl;
 	else
@@ -114,15 +183,15 @@ static void print_special (const std::string &str)
 
 void ScalarConverter::convert (std::string str)
 {
-	if (!is_double(str) && !is_special(str))
+	int type = get_type(str);
+	if (type == -1)
 	{
 		printImpossible();
 		return ;
 	}
 
-	if (is_special(str))
+	if (type == 's')
 		return (print_special(str));
 
-	if (is_double(str))
-		return (print_double(str));
+	return (print_all(str, type));
 }
