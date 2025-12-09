@@ -52,13 +52,16 @@ static bool isFloat(const std::string &s)
     int i = 0, dot = 0;
 
     if (s[i] == '+' || s[i] == '-')
-        i++;
+    {    i++;}
+
+	if (s[i] == '.' || s[i] == '\0')
+		return (false);
 
     for (; i < (int)s.length() - 1; i++)
     {
         if (s[i] == '.')
         {
-            if (dot || i == 0 || s[i + 1] == 'f')
+            if (dot || s[i + 1] == 'f')
 				return (false);
             dot = 1;
         }
@@ -76,13 +79,16 @@ static bool isDouble(const std::string &s)
     int i = 0, dot = 0;
 
     if (s[i] == '+' || s[i] == '-')
-        i++;
+    {    i++;}
+
+	if (s[i] == '.' || s[i] == '\0')
+		return (false);
 
     for (; i < (int)s.length(); i++)
     {
         if (s[i] == '.')
         {
-            if (dot || i == 0 || s[i + 1] == '\0')
+            if (dot || s[i + 1] == '\0')
 				return (false);
             dot = 1;
         }
