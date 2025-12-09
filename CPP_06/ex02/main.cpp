@@ -76,9 +76,6 @@ int main ()
     std::cout << "--------------------" << std::endl;
     identify(NULL);
 
-    std::cout << "--------------------" << std::endl;
-    identify(NULL);
-
     delete instance;
 	return (0);
 }
