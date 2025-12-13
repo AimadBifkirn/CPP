@@ -47,3 +47,53 @@ Templates are C++ feature that enables **generic programing**, allowing to write
    test<int> b(1337); // ok !
    test<std::string> c("this is a test!"); // ok !
    ```
+
+3. Variable Templates: _(Since C++14)_
+
+   A single variable definition that can be used with different types.
+
+   **syntaX:**
+
+   ```CPP
+   template <typename T>
+   T pi = T(3.141592653589793);
+   ```
+   you can use it like this:
+   ```CPP
+   double d = pi<double>;
+   float f = pi<float>;
+   int i = pi<int>; //  = 3
+   ```
+
+### Template specialization
+
+Template specialization means writing a special version of a template for a specific type when the general version is not good enough.
+
+- Lets have an example
+
+   **General template**
+
+   ```CPP
+   template <typename T>
+   void printValue (T value)
+   {
+      std::cout << value << std::endl;
+   }
+   ```
+   This works fine for most types, but let's say we want a deferent behaivior when it comes to bool type.
+
+   **Specialized version (for bool)**
+
+   ```CPP
+   template <> // Empty angle brackets signal that this is a specialization, not a general template
+   void printValue<bool> (bool value) // printValue<bool> : Specifies the exact type we are specializing for (bool) | bool value : Parameter is now specific to bool, instead of generic T
+   {
+      std::cout << (value ? "true" : "false") << std::endl;
+   }
+   ```
+
+   **Usage**
+   ```CPP
+   printValue(5); // general template
+   printValue(true); // specialized template
+   ```
