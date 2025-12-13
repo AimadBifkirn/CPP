@@ -25,3 +25,25 @@ Templates are C++ feature that enables **generic programing**, allowing to write
    float f = add (2.1, 3.5); // T is float
    ```
    The **typename** keyword (or **class** keyword) is used to specify a generic type parameter.
+
+2. Class Templates:
+
+   Define a family of functions with the same logic but different data types.
+
+   **syntax:**
+
+   ```CPP
+   template <typename T>
+   class test
+   {
+      public:
+         T value;
+         test (T arg) : value(arg) {};
+   };
+   ```
+   You must explicitly specify the type when creating an object with this template class.
+   ```CPP
+   test a(1); // compiler error
+   test<int> b(1337); //ok !
+   test<std::string> c("this is a test!"); // ok !
+   ```
