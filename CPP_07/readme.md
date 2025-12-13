@@ -28,7 +28,7 @@ Templates are C++ feature that enables **generic programing**, allowing to write
 
 2. Class Templates:
 
-   Define a family of functions with the same logic but different data types.
+   Define a family of classes with the same logic but different data types.
 
    **syntax:**
 
@@ -44,6 +44,6 @@ Templates are C++ feature that enables **generic programing**, allowing to write
    You must explicitly specify the type when creating an object with this template class.
    ```CPP
    test a(1); // compiler error
-   test<int> b(1337); //ok !
+   test<int> b(1337); // ok !
    test<std::string> c("this is a test!"); // ok !
    ```
