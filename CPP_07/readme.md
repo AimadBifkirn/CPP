@@ -5,8 +5,11 @@ Templates are C++ feature that enables **generic programing**, allowing to write
 
 ### Types of Templates
 1. Function Templates:
+
  Define a family of functions with the same logic but different data types.
+
  **Syntax:**
+
  ```CPP
  template <typename T>
  T add (T N1, T N2)
