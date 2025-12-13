@@ -2,7 +2,7 @@ NAME = ex02
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
-SRC = main.cpp Base.cpp
+SRC = main.cpp
 
 OBJ = ${SRC:.cpp=.o}
 
