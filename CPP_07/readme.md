@@ -18,6 +18,7 @@ Templates are C++ feature that enables **generic programing**, allowing to write
  }
  ```
  this template defines a function add that will work with all data types.
+
  You can call it for different types, and the compiler automatically shoses the type:
  ```CPP
  int i = add (1, 2); // T is int
