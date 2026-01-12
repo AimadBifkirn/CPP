@@ -1,6 +1,6 @@
 #include "Array.hpp"
 
-int main ()
+int main ( void )
 {
     Array<int> arr(5);
 
@@ -13,7 +13,7 @@ int main ()
     }
 
     try {
-        std::cout << arr[10] << std::endl; // This should throw an exception
+        std::cout << arr[10] << std::endl;
     } catch (const std::out_of_range& e) {
         std::cerr << e.what() << std::endl;
     }
