@@ -1,8 +1,7 @@
 #include "iter.hpp"
 
-char function(int& v) {
+void function(int& v) {
     v *= 10;
-    return 42;
 }
 
 int main ()
