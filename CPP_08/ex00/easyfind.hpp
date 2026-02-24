@@ -2,16 +2,11 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 template <typename T>
 bool easyfind (const T& container, int toFind)
 {
-    typename T::iterator it = container.begin();
-    while (it != container.end())
-    {
-        if (*it == toFind)
-            return true;
-        it++;
-    }
-    return false;
+    typename T::const_iterator it = std::find(container.begin(), container.end(), toFind);
+    return (it != container.end());
 }

@@ -2,11 +2,8 @@
 
 int main ()
 {
-    std::vector<int> vect;
-    vect.push_back (1);
-    vect.push_back (2);
-    vect.push_back (3);
-    vect.push_back (4);
+    int arr[4] = {1, 2, 3, 4};
+    std::vector<int> vect(arr, arr + 4);
 
 
     if (easyfind(vect, 3))
