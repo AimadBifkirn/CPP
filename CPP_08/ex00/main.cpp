@@ -5,9 +5,12 @@ int main ()
     int arr[4] = {1, 2, 3, 4};
     std::vector<int> vect(arr, arr + 4);
 
-
-    if (easyfind(vect, 3))
-        std::cout << "Found !!" << std::endl;
-    else
-        std::cout << "Not found !!" << std::endl;
+    try
+    {
+        std::cout << *easyfind(vect, 1) << std::endl;
+    }
+    catch (const std::runtime_error& e)
+    {
+        std::cout << e.what() << std::endl;
+    }
 }
