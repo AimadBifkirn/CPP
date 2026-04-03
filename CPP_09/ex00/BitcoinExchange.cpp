@@ -33,7 +33,7 @@ void BitcoinExchange::parse (const std::string &fileName)
             parseDate (date);
             std::stringstream ss (line.substr (pos + 1));
             double value;
-            if (!(ss >> value) || !(ss >> std::ws).eof())
+            if (!(ss >> value) || !(ss >> std::ws).eof()) // std::ws is a stream manipulator, it is actually a function, std::ws(ss). katscipi ga3 leading spaces.
                 throw std::runtime_error("Error: invalid value");
             DateValue[date] = value;
         }
