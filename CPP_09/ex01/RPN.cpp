@@ -44,17 +44,14 @@ void RPN::calculate (std::string expression)
         }
         else
         {
-            try
-            {
-                int num = std::stoi (token);
-                st.push (num);
-            }
-            catch (const std::exception &e)
-            {
+            std::stringstream convert (token);
+            int num;
+            if(!(convert >> num) || num > 9)
                 throw std::runtime_error ("Error: invalid token");
-            }
+            st.push (num);
         }
     }
     if (st.size () != 1)
         throw std::runtime_error ("Error: invalid expression");
+    std::cout << st.top () << std::endl;
 }

@@ -8,11 +8,12 @@ class RPN
 {
     private:
         std::stack<int>  st;
-        RPN ();
     public:
+        RPN ();
         RPN (const RPN &other);
         RPN &operator= (const RPN &obj);
         ~RPN ();
+
 
         void calculate (std::string expression);
 };
