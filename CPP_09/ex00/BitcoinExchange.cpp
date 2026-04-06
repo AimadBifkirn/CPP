@@ -119,19 +119,21 @@ void BitcoinExchange::printall (const std::string &inputFile)
                 continue;
             }
             
-            if (DateValue.find (date) != DateValue.end ())
-                std::cout << date << " => " << value << " = " << value * DateValue[date] << std::endl;
+            std::map<std::string, double>::iterator it = DateValue.lower_bound (date);
+            if ((it != DateValue.end () && it->first == date) || (it == DateValue.begin ()  && it->first == date))
+                std::cout << date << " => " << value << " = " << value * it->second << std::endl;
             else
             {
-                std::map<std::string, double>::iterator it = DateValue.lower_bound (date);
-                if (it == DateValue.begin ())
-                    std::cout << date << " => " << value << " = " << value * it->second << std::endl;
+                if (it != DateValue.begin())
+                    --it;
                 else
                 {
-                    --it;
-                    std::cout << date << " => " << value << " = " << value * it->second << std::endl;
+                    std::cout << "Error: no exchange rate available for this date" << std::endl;
+                    continue;
                 }
+                std::cout << date << " => " << value << " = " << value * it->second << std::endl;
             }
+
         }
         else
             std::cout << "Error: bad input => " << line << std::endl;
