@@ -2,7 +2,6 @@
 
 PmergeMe::PmergeMe ()
 {
-    this->hasLeftOver = false;
 }
 
 PmergeMe::PmergeMe (const PmergeMe &other)
@@ -12,7 +11,7 @@ PmergeMe::PmergeMe (const PmergeMe &other)
 
 PmergeMe &PmergeMe::operator= (const PmergeMe &obj)
 {
-    this->hasLeftOver = obj.hasLeftOver;
+    (void)obj;
     return *this;
 }
 
@@ -20,7 +19,7 @@ PmergeMe::~PmergeMe ()
 {
 }
 
-void PmergeMe::makePairs (const std::vector<int> &vect, std::vector<int> &bigs, std::vector<int> &smalls)
+void PmergeMe::makePairs (const std::vector<int> &vect, std::vector<int> &bigs, std::vector<int> &smalls, int &leftover)
 {
     for (size_t i = 0; i < vect.size(); i++)
     {
@@ -33,7 +32,7 @@ void PmergeMe::makePairs (const std::vector<int> &vect, std::vector<int> &bigs, 
         }
         else
         {
-            this->hasLeftOver = true;
+            leftover = pair[0];
             return ;
         }
         if (pair[0] < pair[1])
@@ -49,13 +48,50 @@ void PmergeMe::makePairs (const std::vector<int> &vect, std::vector<int> &bigs, 
     }
 }
 
-void PmergeMe::sortVector (const std::vector<int> &vect)
+void PmergeMe::sortVector (std::vector<int> &vect)
 {
     std::vector<int> bigs;
     std::vector<int> smalls;
-    makePairs (vect, bigs, smalls);
+    int leftover = -1;
+    makePairs (vect, bigs, smalls, leftover);
     if (vect.size() <= 1)
         return ;
     sortVector (bigs);
     // jacobhstal insertion logic :)
+    int first = 0;
+    int second = 1;
+    std::vector<int> insertOrder;
+    for (size_t i = 0; i < smalls.size(); i++)
+    {
+        if (first == 0 && second == 1)
+        {
+            insertOrder.push_back(0);
+            first = 1;
+            second = 1;
+        }
+        else
+        {
+            int next = second + (2 * first);
+            first = second;
+            second = next;
+        }
+        for (int j = second - 1; j >= first; j--)
+        {
+            if (j < (int)smalls.size())
+                insertOrder.push_back(j);
+        }
+    }
+
+    for (size_t i = 0; i < insertOrder.size(); i++)
+    {
+        std::vector<int>::iterator it = std::lower_bound(bigs.begin(), bigs.end(), smalls[insertOrder[i]]);
+        bigs.insert(it, smalls[insertOrder[i]]);
+    }
+
+    if (leftover != -1)
+    {
+        std::vector<int>::iterator it = std::lower_bound(bigs.begin(), bigs.end(), leftover);
+        bigs.insert(it, leftover);
+    }
+    vect = bigs;
 }
