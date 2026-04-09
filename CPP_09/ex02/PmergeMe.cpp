@@ -50,12 +50,12 @@ void PmergeMe::makePairs (const std::vector<int> &vect, std::vector<int> &bigs, 
 
 void PmergeMe::sortVector (std::vector<int> &vect)
 {
+    if (vect.size() <= 1)
+        return ;
     std::vector<int> bigs;
     std::vector<int> smalls;
     int leftover = -1;
     makePairs (vect, bigs, smalls, leftover);
-    if (vect.size() <= 1)
-        return ;
     sortVector (bigs);
     // jacobhstal insertion logic :)
     int first = 0;
