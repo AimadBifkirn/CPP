@@ -120,7 +120,7 @@ void BitcoinExchange::printall (const std::string &inputFile)
             }
             
             std::map<std::string, double>::iterator it = DateValue.lower_bound (date);
-            if ((it != DateValue.end () && it->first == date) || (it == DateValue.begin ()  && it->first == date))
+            if ((it != DateValue.end () && it->first == date))
                 std::cout << date << " => " << value << " = " << value * it->second << std::endl;
             else
             {
