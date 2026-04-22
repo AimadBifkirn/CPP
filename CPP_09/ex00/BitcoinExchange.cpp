@@ -105,10 +105,12 @@ void BitcoinExchange::printall (const std::string &inputFile)
         if (pos != std::string::npos)
         {
             std::string date = line.substr (0, pos);
+            std::string valueStr = line.substr (pos + 1);
             parseDate (date);
-            std::stringstream ss (line.substr (pos + 1));
+
+            std::stringstream ss (valueStr);
             double value;
-            if (!(ss >> value) || value < 0)
+            if (!(ss >> value) || !(ss >> std::ws).eof() || value < 0)
             {
                 std::cout << "Error: not a positive number." << std::endl;
                 continue;
