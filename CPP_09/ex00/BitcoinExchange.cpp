@@ -6,7 +6,7 @@ static void parseDate (const std::string &date)
     if (sscanf(date.c_str(), "%d-%d-%d", &y, &m, &d) != 3)
         throw std::runtime_error("invalid date: " + date);
 
-    if (y < 0 || d < 1 || d > 31 || m < 1 || m > 12)
+    if (y < 1 || d < 1 || d > 31 || m < 1 || m > 12)
         throw std::runtime_error ("Error: bad input => " + date);
     // i might have to check for the months with 30 days and february
 }
