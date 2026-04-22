@@ -40,7 +40,11 @@ void RPN::calculate (std::string expression)
             else if (token == "*")
                 st.push (a * b);
             else if (token == "/")
+            {
+                if (b == 0)
+                    throw std::runtime_error ("Error: division by zero");
                 st.push (a / b);
+            }
         }
         else
         {
