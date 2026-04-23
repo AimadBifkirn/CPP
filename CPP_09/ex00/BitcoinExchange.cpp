@@ -41,6 +41,8 @@ void BitcoinExchange::parse (const std::string &fileName)
             throw std::runtime_error ("Error: invalid line format");
     }
 
+    if (i == 0)
+        throw std::runtime_error ("Error: empty file");
     if (file.eof ())
         file.close ();
      else
@@ -141,6 +143,8 @@ void BitcoinExchange::printall (const std::string &inputFile)
             std::cout << "Error: bad input => " << line << std::endl;
     }
 
+    if (i == 0)
+        throw std::runtime_error ("Error: empty file");
     if (file.eof ())
         file.close ();
      else
