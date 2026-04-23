@@ -12,7 +12,6 @@ int main (int argc, char **argv)
     try
     {
         BitcoinExchange btc("data.csv");
-        // std::cout << "here" << std::endl;
         btc.printall(argv[1]);
     }
     catch (const std::exception &e)
