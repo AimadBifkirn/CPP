@@ -141,7 +141,7 @@ void PmergeMe::sortDeque (std::deque<int> &deq)
     int first = 0;
     int second = 1;
     std::deque<int> insertOrder;
-    for (size_t i = 0; i < smalls.size(); i++)
+    while (second <= (int)smalls.size())
     {
         if (first == 0 && second == 1)
         {
