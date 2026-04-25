@@ -130,12 +130,12 @@ void PmergeMe::makePairs (const std::deque<int> &deq, std::deque<int> &bigs, std
 
 void PmergeMe::sortDeque (std::deque<int> &deq)
 {
+    if (deq.size() <= 1)
+        return ;
     std::deque<int> bigs;
     std::deque<int> smalls;
     int leftover = -1;
     makePairs (deq, bigs, smalls, leftover);
-    if (deq.size() <= 1)
-        return ;
     sortDeque (bigs);
     // jacobhstal insertion logic :)
     int first = 0;
