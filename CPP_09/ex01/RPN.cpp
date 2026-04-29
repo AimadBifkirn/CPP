@@ -50,7 +50,7 @@ void RPN::calculate (std::string expression)
         {
             std::stringstream convert (token);
             int num;
-            if(!(convert >> num) || num > 9)
+            if(!(convert >> num) || !(convert >> std::ws).eof() || num > 9)
                 throw std::runtime_error ("Error: invalid token");
             st.push (num);
         }

@@ -8,7 +8,6 @@ static void parseDate (const std::string &date)
 
     if (y < 1 || d < 1 || d > 31 || m < 1 || m > 12)
         throw std::runtime_error ("Error: bad input => " + date);
-    // i might have to check for the months with 30 days and february
 }
 
 void BitcoinExchange::parse (const std::string &fileName)
@@ -33,7 +32,7 @@ void BitcoinExchange::parse (const std::string &fileName)
             parseDate (date);
             std::stringstream ss (line.substr (pos + 1));
             double value;
-            if (!(ss >> value) || !(ss >> std::ws).eof()) // std::ws is a stream manipulator, it is actually a function, std::ws(ss). katscipi ga3 leading spaces.
+            if (!(ss >> value) || !(ss >> std::ws).eof() || value < 0) // std::ws is a stream manipulator, it is actually a function, std::ws(ss). katscipi ga3 leading spaces.
                 throw std::runtime_error("Error: invalid value");
             DateValue[date] = value;
         }
