@@ -14,7 +14,7 @@ int main (int argc, char **argv)
     {
         std::istringstream iss(argv[i]);
         int num;
-        if (!(iss >> num) || num < 0)
+        if (!(iss >> num) || !(iss >> std::ws).eof() || num < 0)
         {
             std::cerr << "Error" << std::endl;
             return 1;
